@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,22 +29,24 @@ public class Switchup extends Skill {
     private static void quickSwitch(LivingEntity caster, LivingEquipmentChangeEvent event, SkillData stats) {
         //block obvious cheaties
         if (event.getFrom().equals(event.getTo())) return;
-        if (!event.getFrom().isEmpty()&&(event.getFrom().equals(caster.getMainHandItem()) || event.getFrom().equals(caster.getOffhandItem()))) return;
+        if (!event.getFrom().isEmpty() && (event.getFrom().equals(caster.getMainHandItem()) || event.getFrom().equals(caster.getOffhandItem())))
+            return;
+        //todo make sure it's fresh
         WeaponStats.WeaponInfo previnfo = WeaponStats.lookupStats(event.getFrom());
         WeaponStats.WeaponInfo newinfo = WeaponStats.lookupStats(event.getTo());
-        if (previnfo != newinfo)
-        if(event.getSlot()==EquipmentSlot.MAINHAND)
-            stats.setDuration(1);
-        else stats.setArbitraryFloat(1);
+        if (previnfo == null || newinfo == null || !previnfo.getName().equals(newinfo.getName()))
+            if (event.getSlot() == EquipmentSlot.MAINHAND)
+                stats.setDuration(1);
+            else stats.setArbitraryFloat(1);
     }
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if(stats.getDuration()>0) {
+        if (stats.getDuration() > 0) {
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 1, true);
             stats.setDuration(0);
         }
-        if(stats.getArbitraryFloat()>0) {
+        if (stats.getArbitraryFloat() > 0) {
             CombatUtils.setHandCooldown(caster, InteractionHand.OFF_HAND, 1, true);
             stats.setArbitraryFloat(0);
         }

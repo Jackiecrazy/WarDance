@@ -1,6 +1,7 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.charging.IChargingSpeed;
@@ -22,6 +23,7 @@ import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.config.weapon.BCBackupProvider;
 import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;
@@ -37,6 +39,7 @@ import jackiecrazy.wardance.networking.skill.UpdateMarkPacket;
 import jackiecrazy.wardance.networking.skill.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.networking.sync.*;
 import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.grapple.Grapple;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -44,6 +47,7 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
@@ -140,6 +144,7 @@ public class WarDance {
 
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
+        EntityDataSerializers.registerSerializer(GrappleEntity.RETRACTING);
         //packets
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientResourcePacket.class, new UpdateClientResourcePacket.Encoder(), new UpdateClientResourcePacket.Decoder(), new UpdateClientResourcePacket.Handler());

@@ -6,6 +6,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.RaytraceHelper;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
@@ -214,7 +215,7 @@ public class ClientEvents {
         if (p != null && !mc.isPaused()) {
             if (e.phase == TickEvent.Phase.START) {
                 conflictMap--;
-                Entity look = RenderUtils.getEntityLookedAt(p, 32);
+                Entity look = RaytraceHelper.INSTANCE.getEntityLookedAt(p, 32);
                 if (look != lastTickLookAt) {
                     lastTickLookAt = look;
                     if (look instanceof LivingEntity && look.isAlive())
@@ -460,7 +461,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
-        Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.MAIN_HAND));
+        Entity n = RaytraceHelper.INSTANCE.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.MAIN_HAND));
 //        if (n != null && e.getEntity().tickCount != lastAttackTick) {
 //            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
 //            lastAttackTick = e.getEntity().tickCount;
@@ -485,7 +486,7 @@ public class ClientEvents {
         }
         if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
-            Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
+            Entity n = RaytraceHelper.INSTANCE.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));//todo obsolete in favor of click actions
@@ -508,7 +509,7 @@ public class ClientEvents {
     public static void sweepSwingBlock(PlayerInteractEvent.LeftClickBlock e) {
         if (Minecraft.getInstance().gameMode.isDestroying()) return;
         float temp = CombatUtils.getCooledAttackStrength(e.getEntity(), InteractionHand.MAIN_HAND, 0.5f);
-        Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.MAIN_HAND));
+        Entity n = RaytraceHelper.INSTANCE.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.MAIN_HAND));
         if (n != null && e.getEntity().tickCount != lastAttackTick) {
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
             lastAttackTick = e.getEntity().tickCount;
@@ -537,7 +538,7 @@ public class ClientEvents {
         if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             if (!rightClick) {
                 rightClick = true;
-                Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
+                Entity n = RaytraceHelper.INSTANCE.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
                 e.getEntity().swing(InteractionHand.OFF_HAND, false);
                 if (n != null && e.getEntity().tickCount != lastAttackTick) {
                     CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -571,7 +572,7 @@ public class ClientEvents {
         }
         if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
-            Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
+            Entity n = RaytraceHelper.INSTANCE.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -601,7 +602,7 @@ public class ClientEvents {
         if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             if (!rightClick) {
                 rightClick = true;
-                Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+                Entity n = RaytraceHelper.INSTANCE.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
                 e.getEntity().swing(InteractionHand.OFF_HAND, false);
                 if (n != null && e.getEntity().tickCount != lastAttackTick) {
                     CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -685,7 +686,7 @@ public class ClientEvents {
             event.setSwingHand(false);             // we'll swing ourselves
 
             // Your existing logic
-            Entity target = RenderUtils.getEntityLookedAt(mc.player, mc.player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
+            Entity target = RaytraceHelper.INSTANCE.getEntityLookedAt(mc.player, mc.player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
 
 //            if (target != null) {
 //                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(

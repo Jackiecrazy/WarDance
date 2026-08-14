@@ -62,9 +62,9 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getState() != STATE.ACTIVE||caster.level().isClientSide) return false;
+        if (stats.getState() != STATE.ACTIVE || caster.level().isClientSide) return false;
         final ICombatCapability cap = CombatData.getCap(caster);
-        if(!StylishData.getCap(caster).drainAdrenaline(0.01f/stats.getEffectiveness())) {
+        if (!StylishData.getCap(caster).drainAdrenaline(0.01f / stats.getEffectiveness())) {
             markUsed(caster);
             return true;
         }
@@ -86,12 +86,16 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if(state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
+    public void onProc(LivingEntity caster,
+                       Event procPoint,
+                       STATE state,
+                       SkillData stats,
+                       @Nullable LivingEntity target) {
+        if (state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
             if (procPoint instanceof GainAdrenalineEvent gme) {
                 gme.setQuantity(0);
             }
-            if(procPoint instanceof DamageKnockbackEvent e && target!=caster){
+            if (procPoint instanceof DamageKnockbackEvent e && target != caster) {
                 e.setStrength(0);
             }
         }

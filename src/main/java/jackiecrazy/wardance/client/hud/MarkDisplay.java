@@ -3,6 +3,8 @@ package jackiecrazy.wardance.client.hud;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
+import jackiecrazy.footwork.config.DisplayConfigUtils;
+import jackiecrazy.footwork.utils.RaytraceHelper;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -38,7 +40,7 @@ public class MarkDisplay implements IGuiOverlay {
             //marks and cooldowns
             afflict.addAll(Marks.getCap(player).getActiveMarks().values().stream().filter(a -> a.getSkill().showsMark(a, player)).collect(Collectors.toList()));
             //afflict.addAll(CasterData.getCap(player).getAllSkillData().values().stream().filter(a -> a.getState() == Skill.STATE.COOLING).collect(Collectors.toSet()));
-            Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.playerAfflict, width, height);
+            Pair<Integer, Integer> pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.playerAfflict, width, height);
 
             for (int index = 0; index < afflict.size(); index++) {
                 SkillData s = afflict.get(index);
@@ -59,7 +61,7 @@ public class MarkDisplay implements IGuiOverlay {
 
             }
         }
-        Entity look = RenderUtils.getEntityLookedAt(player, 32);
+        Entity look = RaytraceHelper.INSTANCE.getCameraMouseOverEntity(mc, 32);
         if (look instanceof LivingEntity looked) {
             List<SkillData> afflict = new ArrayList<>();
             final ISkillCapability skill = CasterData.getCap(player);
@@ -71,7 +73,7 @@ public class MarkDisplay implements IGuiOverlay {
                     }
                 //marks
                 afflict.addAll(Marks.getCap(looked).getActiveMarks().values().stream().filter(a -> a.getSkill().showsMark(a, looked)).collect(Collectors.toList()));
-                Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
+                Pair<Integer, Integer> pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
                 for (int index = 0; index < afflict.size(); index++) {
                     //draw icon
                     SkillData s = afflict.get(index);

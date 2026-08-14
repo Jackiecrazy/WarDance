@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.RenderUtils;
@@ -95,7 +96,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
             //actives
             final ISkillCapability cap = CasterData.getCap(player);
             skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && !a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());
-            Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.skillCD, width, height);
+            Pair<Integer, Integer> pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.skillCD, width, height);
             drawSkills(guiGraphics, mc, skill, pair.getFirst(), pair.getSecond());
             skill.clear();
             skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());

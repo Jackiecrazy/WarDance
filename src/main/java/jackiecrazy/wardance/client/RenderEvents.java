@@ -10,6 +10,7 @@ import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.client.GuiComponent;
 import jackiecrazy.footwork.client.screen.dashboard.DashboardScreen;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.RaytraceHelper;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
@@ -160,7 +161,7 @@ public class RenderEvents {
         PoseStack poseStack = event.getPoseStack();
         float partialTicks = event.getPartialTick();
         Entity cameraEntity = camera.getEntity() != null ? camera.getEntity() : mc.player;
-        Entity look = RenderUtils.getEntityLookedAt(Minecraft.getInstance().player, 32);
+        Entity look = RaytraceHelper.INSTANCE.getCameraMouseOverEntity(mc, 32);
 
         Vec3 cameraPos = camera.getPosition();
         final Frustum frustum = new Frustum(poseStack.last().pose(), event.getProjectionMatrix());

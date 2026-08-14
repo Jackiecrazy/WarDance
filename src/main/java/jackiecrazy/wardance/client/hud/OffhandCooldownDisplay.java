@@ -3,6 +3,7 @@ package jackiecrazy.wardance.client.hud;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.RaytraceHelper;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.AttackIndicatorStatus;
@@ -11,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -62,9 +64,10 @@ public class OffhandCooldownDisplay implements IGuiOverlay {
             float cooldown = CombatUtils.getCooledAttackStrength(player, InteractionHand.OFF_HAND, 0f);
             boolean hyperspeed = false;
 
-            if (RenderUtils.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND)) != null && cooldown >= 1.0F) {
+            Entity off= RaytraceHelper.INSTANCE.getCameraMouseOverEntity(mc, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
+            if (off != null && cooldown >= 1.0F) {
                 hyperspeed = CombatUtils.getCooldownPeriod(player, InteractionHand.OFF_HAND) > 5.0F;
-                hyperspeed = hyperspeed & (RenderUtils.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND))).isAlive();
+                hyperspeed = hyperspeed & off.isAlive();
             }
 
             int y = height / 2 - 7 - 7;

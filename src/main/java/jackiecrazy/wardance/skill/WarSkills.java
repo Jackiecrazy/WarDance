@@ -24,7 +24,7 @@ import jackiecrazy.wardance.skill.ironguard.*;
 import jackiecrazy.wardance.skill.judgment.ViralDecay;
 import jackiecrazy.wardance.skill.kick.*;
 import jackiecrazy.wardance.skill.mementomori.*;
-import jackiecrazy.wardance.skill.bursts.Berserk;
+import jackiecrazy.wardance.skill.bursts.Asura;
 import jackiecrazy.wardance.skill.misc.FatalCadence;
 import jackiecrazy.wardance.skill.misc.Pounce;
 import jackiecrazy.wardance.skill.misc.Switchup;
@@ -104,7 +104,7 @@ public class WarSkills {
     //public static final RegistryObject<Skill> ARM_LOCK = SKILLS.register("lockdown", () -> new Lockdown().setCategory(SkillColors.green).setChallenge());
     public static final RegistryObject<Skill> BACKFLIP = SKILLS.register("backflip", () -> new Kick.Backflip().setCategory(SkillColors.gray).setChallenge());
     public static final RegistryObject<Skill> ACROBATICS = SKILLS.register("acrobatics", () -> new Acrobatics().setCategory(SkillColors.cyan));
-    public static final RegistryObject<Skill> BERSERK = SKILLS.register("berserk", () -> new Berserk().setCategory(SkillColors.red).setChallenge());
+    public static final RegistryObject<Skill> ASURA = SKILLS.register("asuras_wrath", () -> new Asura().setCategory(SkillColors.red).setChallenge());
     public static final RegistryObject<Skill> BLOODLUST = SKILLS.register("bloodlust", () -> new MementoMori().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> CONFIDENCE = SKILLS.register("confidence", () -> new Confidence().setCategory(SkillColors.green));
     ///public static final RegistryObject<Skill> CROWN_CHAMPION = SKILLS.register("crown_champion", () -> new CrownChampion().setCategory(SkillColors.white));

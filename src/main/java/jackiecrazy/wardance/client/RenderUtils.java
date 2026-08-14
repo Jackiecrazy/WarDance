@@ -21,6 +21,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -35,66 +36,6 @@ public class RenderUtils {
     public static DecimalFormat formatter_truncate = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
 
-    /**
-     * @author Vazkii
-     */
-    public static Entity getEntityLookedAt(Entity e, double finalDistance) {
-        Entity foundEntity = null;
-        double distance = finalDistance;
-        HitResult pos = raycast(e, finalDistance);
-        Vec3 positionVector = e.position();
-
-        if (e instanceof Player) positionVector = positionVector.add(0, e.getEyeHeight(e.getPose()), 0);
-
-        if (pos != null) distance = pos.getLocation().distanceTo(positionVector);
-
-        Vec3 lookVector = e.getLookAngle();
-        Vec3 reachVector = positionVector.add(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance);
-
-        Entity lookedEntity = null;
-        List<Entity> entitiesInBoundingBox = e.getCommandSenderWorld().getEntities(e, e.getBoundingBox().inflate(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance).expandTowards(1F, 1F, 1F));
-        double minDistance = distance;
-
-        for (Entity entity : entitiesInBoundingBox) {
-            if (entity.isPickable()) {
-                AABB collisionBox = entity.getBoundingBoxForCulling();
-                Optional<Vec3> interceptPosition = collisionBox.clip(positionVector, reachVector);
-
-                if (collisionBox.contains(positionVector)) {
-                    if (0.0D < minDistance || minDistance == 0.0D) {
-                        lookedEntity = entity;
-                        minDistance = 0.0D;
-                    }
-                } else if (interceptPosition.isPresent()) {
-                    double distanceToEntity = positionVector.distanceTo(interceptPosition.get());
-
-                    if (distanceToEntity < minDistance || minDistance == 0.0D) {
-                        lookedEntity = entity;
-                        minDistance = distanceToEntity;
-                    }
-                }
-            }
-
-            if (lookedEntity != null && (minDistance < distance || pos == null)) foundEntity = lookedEntity;
-        }
-
-        return foundEntity;
-    }
-
-    public static HitResult raycast(Entity e, double len) {
-        Vec3 vec = new Vec3(e.getX(), e.getY(), e.getZ());
-        if (e instanceof Player) vec = vec.add(new Vec3(0, e.getEyeHeight(e.getPose()), 0));
-
-        Vec3 look = e.getLookAngle();
-        if (look == null) return null;
-
-        return raycast(vec, look, e, len);
-    }
-
-    public static HitResult raycast(Vec3 origin, Vec3 ray, Entity e, double len) {
-        Vec3 next = origin.add(ray.normalize().scale(len));
-        return e.level().clip(new ClipContext(origin, next, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, e));
-    }
 
     public static void drawCooldownCircle(PoseStack ms, int x, int y, int size, float v, boolean inverted) {
         //todo occasionally reverts and shows a square when certain entities are in view
@@ -146,57 +87,6 @@ public class RenderUtils {
 
     private static void drawVertex(BufferBuilder bufferbuilder, int x, int y) {
         bufferbuilder.vertex(x, y, 0.0D).uv(0, 0).color(32, 32, 32, 205).endVertex();
-    }
-
-    public static Pair<Integer, Integer> translateCoords(DisplayConfigUtils.DisplayData dd, int width, int height) {
-        return translateCoords(dd.anchorPoint, dd.numberX, dd.numberY, width, height);
-    }
-
-    private static Pair<Integer, Integer> translateCoords(DisplayConfigUtils.AnchorPoint ap, int x, int y, int width, int height) {
-        int retx, rety;
-        switch (ap) {
-            case TOPLEFT:
-                retx = 0;
-                rety = 0;
-                break;
-            case TOPRIGHT:
-                retx = 0;
-                rety = width;
-                break;
-            case CROSSHAIR:
-                retx = width / 2;
-                rety = height / 2;
-                break;
-            case TOPCENTER:
-                retx = width / 2;
-                rety = 0;
-                break;
-            case BOTTOMLEFT:
-                retx = 0;
-                rety = height;
-                break;
-            case MIDDLELEFT:
-                retx = 0;
-                rety = height / 2;
-                break;
-            case BOTTOMRIGHT:
-                retx = width;
-                rety = height;
-                break;
-            case MIDDLERIGHT:
-                retx = width;
-                rety = height / 2;
-                break;
-            case BOTTOMCENTER:
-                retx = width / 2;
-                rety = height;
-                break;
-            default:
-                retx = rety = 0;
-        }
-        retx = Mth.clamp(retx + x, 0, width);
-        rety = Mth.clamp(rety + y, 0, height);
-        return Pair.of(retx, rety);
     }
 
     public static void openScrollScreen(boolean off, Skill... sk) {

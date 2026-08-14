@@ -10,6 +10,8 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.client.GuiComponent;
+import jackiecrazy.footwork.config.DisplayConfigUtils;
+import jackiecrazy.footwork.utils.RaytraceHelper;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
@@ -61,7 +63,7 @@ public class ResourceDisplay implements IGuiOverlay {
      * Draws it with the coord as its center
      */
     private static void drawNewDarkPostureBarAt(boolean you, GuiGraphics ms, LivingEntity elb, int width, int height) {
-        Pair<Integer, Integer> pair = you ? RenderUtils.translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : RenderUtils.translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        Pair<Integer, Integer> pair = you ? DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
@@ -268,7 +270,7 @@ public class ResourceDisplay implements IGuiOverlay {
 
                 RenderSystem.enableBlend();
                 //RenderSystem.enableAlphaTest();
-                Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.adrenalineBar, width, height);
+                Pair<Integer, Integer> pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.adrenalineBar, width, height);
                 int x = Math.max(pair.getFirst(), 0);
                 int y = Math.min(pair.getSecond(), height - 5);
                 int fillHeight = (int) (currentAdrenaline * 32);
@@ -281,7 +283,7 @@ public class ResourceDisplay implements IGuiOverlay {
 
 
                 if (ClientConfig.CONFIG.adrenalineCircle.enabled) {
-                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.adrenalineCircle, width, height);
+                    pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.adrenalineCircle, width, height);
                     x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
                     y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
                     RenderSystem.setShaderTexture(0, raihud);
@@ -313,7 +315,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 }
 
 
-                pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spiritBar, width, height);
+                pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.spiritBar, width, height);
                 x = Mth.clamp(pair.getFirst(), 0, width - 32);
                 y = Mth.clamp(pair.getSecond(), 0, height - 5);
                 fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
@@ -328,7 +330,7 @@ public class ResourceDisplay implements IGuiOverlay {
 
                 //spirit circle
                 if (ClientConfig.CONFIG.spiritCircle.enabled) {
-                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spiritCircle, width, height);
+                    pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.spiritCircle, width, height);
                     x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
                     y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
                     RenderSystem.setShaderTexture(0, raihud);
@@ -361,11 +363,11 @@ public class ResourceDisplay implements IGuiOverlay {
                 //numbers
                 {
                     if (ClientConfig.CONFIG.spiritNumber.enabled) {
-                        pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
+                        pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
                         graphics.drawString(gui.getFont(), display, pair.getFirst() - mc.font.width(display) / 2, pair.getSecond() - 2, ClientConfig.spiritColor);
                     }
                     if (ClientConfig.CONFIG.adrenalineNumber.enabled) {
-                        pair = RenderUtils.translateCoords(ClientConfig.CONFIG.adrenalineNumber, width, height);
+                        pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.adrenalineNumber, width, height);
                         display = RenderUtils.formatter.format(currentAdrenaline) + "/" + RenderUtils.formatter.format(1);
                         graphics.drawString(gui.getFont(), display, pair.getFirst() - mc.font.width(display) / 2, pair.getSecond() - 2, ClientConfig.adrenalineColor);
                     }
@@ -394,7 +396,7 @@ public class ResourceDisplay implements IGuiOverlay {
                         combowidth = 64;
                         comboU = 192;
                     }
-                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.combo, width, height);
+                    pair = DisplayConfigUtils.translateCoords(ClientConfig.CONFIG.combo, width, height);
                     x = Mth.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
                     y = Mth.clamp(pair.getSecond() - 23, 0, height - 46);
                     graphics.blit(raihud, x, y, comboU, 32, combowidth, 32);
@@ -434,7 +436,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 drawPostureBarAt(true, graphics, player, width, height);
 
 
-            Entity look = RenderUtils.getEntityLookedAt(player, 32);
+            Entity look = RaytraceHelper.INSTANCE.getCameraMouseOverEntity(mc, 32);
             if (look instanceof LivingEntity looked) {
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 final ICombatCapability loocap = CombatData.getCap((LivingEntity) look);

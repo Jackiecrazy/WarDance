@@ -7,7 +7,6 @@ import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.motionframe.render.RenderNode;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.movement.ResetAirJumpPacket;
@@ -16,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
@@ -40,6 +40,7 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.List;
 
 public class GrappleEntity extends FlyingItemEntity {
+    public static final EntityDataSerializer<ACTION> RETRACTING = EntityDataSerializer.simpleEnum(ACTION.class);
     public static final int SQDIST = 5;
     public static final int MAXDIST = 32;
     /*
@@ -54,33 +55,34 @@ public class GrappleEntity extends FlyingItemEntity {
     gonna be a bit creative with the fields here.
      */
     protected static final EntityDataAccessor<Float> TETHER_LENGTH = SynchedEntityData.defineId(GrappleEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<ACTION> RETRACT = SynchedEntityData.defineId(GrappleEntity.class, RETRACTING);
     private boolean hooked = false;
     private Entity hookedEntity = null;
     private double hookEntityOffset = 0;
     private BlockHitResult hookedHit = null;
+    private double hookStrength = 0.6;
+    private int hookedTicks = 0;
+
+    public GrappleEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
+        super(type, level);
+        renderLag = SQDIST;
+        setCosmeticItem(new RenderItemGroup(new RenderNode.ItemNode(new ItemStack(Items.IRON_PICKAXE), Vec3.ZERO, new Vec3(0, 0.5, -0.3))
+//                , new RenderNode.ItemNode(new ItemStack(Items.IRON_PICKAXE), new Vec3(0,90,0), new Vec3(0,0.5,-0.3))
+        ));
+        setEffect(FlyingWeaponEffect.WEAPON);
+    }
+
+    private ACTION getRetractAction(){
+        return getEntityData().get(RETRACT);
+    }
 
     public double getHookStrength() {
-        return hookStrength;
+        return getRetractAction() == ACTION.ZIP ? 2 : hookStrength;
     }
 
     public GrappleEntity setHookStrength(double hookStrength) {
         this.hookStrength = hookStrength;
         return this;
-    }
-
-    private double hookStrength = 2;
-    private int hookedTicks = 0;
-    private ACTION retractAction = null;
-
-    public GrappleEntity(EntityType<? extends FlyingItemEntity> type,
-                         Level level) {
-        super(type, level);
-        renderLag = SQDIST;
-        setCosmeticItem(new RenderItemGroup(
-                new RenderNode.ItemNode(new ItemStack(Items.IRON_PICKAXE), Vec3.ZERO, new Vec3(0,0.5,-0.3))
-//                , new RenderNode.ItemNode(new ItemStack(Items.IRON_PICKAXE), new Vec3(0,90,0), new Vec3(0,0.5,-0.3))
-        ));
-        setEffect(FlyingWeaponEffect.WEAPON);
     }
 
     public boolean hooked() {
@@ -94,12 +96,12 @@ public class GrappleEntity extends FlyingItemEntity {
 
     @Override
     public void moveTargetTowards(Entity toBeMoved, Vec3 point, double force) {
-        super.moveTargetTowards(toBeMoved, point, hookStrength);
+        super.moveTargetTowards(toBeMoved, point, getHookStrength());
     }
 
     @Override
     public void updateTetheringVelocity() {
-        if (retractAction != null) {
+        if (getRetractAction() != ACTION.NONE) {
             super.updateTetheringVelocity(); //pull phase
         }
     }
@@ -199,6 +201,7 @@ public class GrappleEntity extends FlyingItemEntity {
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(TETHER_LENGTH, 0f);
+        this.entityData.define(RETRACT, ACTION.NONE);
     }
 
     /**
@@ -209,16 +212,16 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public Entity getTetheredEntity() {
         if (!hooked) return null;
-        if (retractAction == ACTION.ZIP) return this;
-        if (getOwner().isShiftKeyDown()) return getOwner();
+        if (getRetractAction() == ACTION.ZIP) return this;
+        if (getOwner().isShiftKeyDown() || getRetractAction() == ACTION.YANK) return getOwner();
         return hookedEntity == null ? this : hookedEntity;
     }
 
     @Override
     public Entity getTetheringEntity() {
         if (!hooked) return null;
-        if (retractAction == ACTION.ZIP) return getOwner();
-        if (getOwner().isShiftKeyDown()) return hookedEntity;
+        if (getRetractAction() == ACTION.ZIP) return getOwner();
+        if (getOwner().isShiftKeyDown() || getRetractAction() == ACTION.YANK) return hookedEntity;
         return getOwner();
     }
 
@@ -230,10 +233,13 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public void tick() {
         super.tick();
-        if (getOwner() == null)
-            return;
-        if (hooked())
-            hookedTicks++;
+        if (level().isClientSide) {
+            updateTetheringVelocity();
+//            handleEntityCollisions();
+//            handleBlockCollisions();
+        }//does this even do anything? super already handles blocks
+        if (getOwner() == null) return;
+        if (hooked()) hookedTicks++;
         if (!intangible()) {//hooked onto something
             renderLag--;
             if (renderLag < 0) renderLag = 0;
@@ -241,32 +247,25 @@ public class GrappleEntity extends FlyingItemEntity {
             //become faster over time
             //addDeltaMovement(getDeltaMovement().normalize().scale(0.01));
         }
-        if (level().isClientSide) {
-            updateTetheringVelocity();
-            handleEntityCollisions();
-            handleBlockCollisions();
-        }
         if (swinging()) {
             if (getTetherLength() >= 2) {
                 final double dist = Math.max(2, getTetherLength() - Math.min(1, hookedTicks * 0.2));
-                setTetherLength(dist);
+                //setTetherLength(dist);
             }
             swing();
         }
-        boolean yank = getOwner().isShiftKeyDown() || (retractAction == ACTION.YANK);
+        boolean yank = getOwner().isShiftKeyDown() || (getRetractAction() == ACTION.YANK);
         //server side velocity stuff
         if (isAlive()) {//!level().isClientSide &&
             //general sanity death checks
             if (getOwner() instanceof Player p) {
-                if (p.distanceToSqr(this) > MAXDIST * MAXDIST)
-                    remove(RemovalReason.DISCARDED);
+                if (p.distanceToSqr(this) > MAXDIST * MAXDIST) remove(RemovalReason.DISCARDED);
 //                else if ((getTetheringEntity() == p && GeneralUtils.getDistSqCompensated(this, p) < SQDIST)) {
 //                    remove(RemovalReason.DISCARDED);
 //                    unhookAndJump(p, false);
 //                }
             }
-            if (tickCount > 60 && !hooked)
-                remove(RemovalReason.DISCARDED);
+            if (tickCount > 60 && !hooked) remove(RemovalReason.DISCARDED);
 
             //server only stuff: pick up, kick, rip block
             if (!hooked || level().isClientSide) return;
@@ -312,10 +311,8 @@ public class GrappleEntity extends FlyingItemEntity {
                 }
             } else if (hookedHit != null) {
                 //hooked a block
-                if (retractAction == ACTION.YANK)
-                    ripBlock();
-                else if (retractAction == ACTION.ZIP && distanceToSqr(getOwner()) < 2)
-                    unhookAndJump(getOwner(), true);
+                if (getRetractAction() == ACTION.YANK) ripBlock();
+                else if (getRetractAction() == ACTION.ZIP && distanceToSqr(getOwner()) < 2) unhookAndJump(getOwner(), true);
             }
             getOwner().fallDistance = 1;
         }
@@ -323,8 +320,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
     private void unhookAndJump(LivingEntity p, boolean resetVelocity) {
         remove(RemovalReason.DISCARDED);
-        if (resetVelocity)
-            p.setDeltaMovement(new Vec3(0, 0.5, 0));
+        if (resetVelocity) p.setDeltaMovement(new Vec3(0, 0.5, 0));
         else p.setDeltaMovement(p.getDeltaMovement().multiply(1, 0, 1).add(0, 0.5, 0));
         p.resetFallDistance();
         //AerialModeData.getCap(p).alterGravity(20, 0.3);
@@ -368,13 +364,12 @@ public class GrappleEntity extends FlyingItemEntity {
     }
 
     public boolean swinging() {
-        return !isRemoved() && hooked && retractAction == null;
+        return !isRemoved() && hooked && getRetractAction() == ACTION.NONE;
     }
 
 
-
     public void retract(ACTION act) {
-        retractAction = act;
+        entityData.set(RETRACT, act);
         switch (act) {
             case RELEASE -> this.remove(RemovalReason.DISCARDED);//ezpz no more vector changes
             case JUMP -> unhookAndJump(getOwner(), false);
@@ -383,7 +378,7 @@ public class GrappleEntity extends FlyingItemEntity {
                 setTetherLength(0);
                 if (hookedEntity instanceof LivingEntity h && getOwner() != null) {
                     //battle of strength!
-                    final float strMod = Math.min(1, CombatData.getCap(getOwner()).getMaxPosture() / CombatData.getCap(h).getMaxPosture());
+                    final float strMod = (float) Math.min(1, hookStrength * CombatData.getCap(getOwner()).getMaxPosture() / CombatData.getCap(h).getMaxPosture());
                     hookStrength = strMod * strMod;
                 }
             }
@@ -444,6 +439,12 @@ public class GrappleEntity extends FlyingItemEntity {
     }
 
     @Override
+    protected void updateClientData() {
+        super.updateClientData();
+        handleEntityCollisions();//this happens right before handleBlockCollisions on the client
+    }
+
+    @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
 
     }
@@ -475,9 +476,6 @@ public class GrappleEntity extends FlyingItemEntity {
     }
 
     public enum ACTION {
-        RELEASE,
-        JUMP,
-        YANK,
-        ZIP
+        NONE, RELEASE, JUMP, YANK, ZIP
     }
 }

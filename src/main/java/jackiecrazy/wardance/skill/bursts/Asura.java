@@ -1,11 +1,10 @@
 package jackiecrazy.wardance.skill.bursts;
 
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
-import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
-import jackiecrazy.wardance.entity.FlyingWeaponEntity;
+import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.event.ConsumePostureEvent;
 import jackiecrazy.wardance.event.GrappleEvent;
 import jackiecrazy.wardance.skill.Skill;
@@ -27,15 +26,15 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class Berserk extends Skill {
+public class Asura extends Skill {
+    /*
+    grow two more arms and make all weapons visible. Each attack strikes with all three arms from one side and always breaches.
+    your grapples will always yank and you gain invul and twohanding
+    lasts 10 seconds, each kill extends it
+     */
     private static final AttributeModifier berserk = new AttributeModifier(UUID.fromString("a2124c38-73e3-4551-9df4-e06e117600c1"), "berserk twohanding bonus", 3, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier berserk1 = new AttributeModifier(UUID.fromString("a2124c38-73e3-4551-9df4-e06e117600c1"), "berserk attack speed bonus", 0.2, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private final HashSet<String> tag = makeTag(SkillTags.offensive, SkillTags.physical);
-
-    @Override
-    public int spiritCost(LivingEntity caster) {
-        return 1;
-    }
 
     @Override
     public float mightCost(LivingEntity caster) {
@@ -56,14 +55,14 @@ public class Berserk extends Skill {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() == STATE.ACTIVE) {
-            if(!StylishData.getCap(caster).drainAdrenaline(0.01f/stats.getEffectiveness())) {
+            if(!StylishData.getCap(caster).drainAdrenaline(0.005f/stats.getEffectiveness())) {
                 markUsed(caster);
                 return true;
             }
             if (caster.getMainHandItem().is(WeaponStats.TWO_HANDED) && caster.getOffhandItem().is(WeaponStats.TWO_HANDED))
                 completeChallenge(caster);
-            if(FlyingWeaponData.getCap(caster).hasGrapple())
-                FlyingWeaponData.getCap(caster).getGrapple().setHookStrength(10);
+//            if(FlyingWeaponData.getCap(caster).hasGrapple())
+//                FlyingWeaponData.getCap(caster).getGrapple().setHookStrength(10);
         }
         return false;
     }
@@ -84,11 +83,15 @@ public class Berserk extends Skill {
             }
         }
         if(state == STATE.ACTIVE) {
-            if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-                stats.setDuration(stats.getMaxDuration());
-            }
+//            if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+//                StylishData.getCap(caster).;
+//            }
+//            if (procPoint instanceof StunEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+//                stats.setDuration(stats.getMaxDuration());
+//            }
             if (procPoint instanceof GrappleEvent e && e.getEntity()==caster){
-                e.getGrapple().setHookStrength(10000);
+                e.getGrapple().setHookStrength(300);
+                e.getGrapple().retract(GrappleEntity.ACTION.YANK);
             }
             if (procPoint instanceof LivingHurtEvent e && e.getEntity()==caster){
                 e.setAmount(0);
