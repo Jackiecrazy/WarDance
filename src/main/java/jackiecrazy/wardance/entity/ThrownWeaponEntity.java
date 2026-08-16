@@ -403,12 +403,12 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public void remove(RemovalReason reason) {
-        WarDance.LOGGER.fatal("if this keeps fucking happening I'm gonna make it not fucking consume the item");
-        try{
-            throw new RuntimeException("flying weapon at "+position()+" has been deleted");
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
+//        WarDance.LOGGER.fatal("if this keeps fucking happening I'm gonna make it not fucking consume the item");
+//        try{
+//            throw new RuntimeException("flying weapon at "+position()+" has been deleted");
+//        } catch (RuntimeException e) {
+//            e.printStackTrace();
+//        }
         //fixme due to elaborate swap sequences, picking up a thrown weapon with a sprinting sweep will delete it
         // hand attacks, sets the weapon, performs pickup flourish, but it's still part of the attack action so at the end the hand gets reset to what it was before, air.
         if (reason.shouldDestroy() && getOwner() instanceof Player p && !pickup(p)) {

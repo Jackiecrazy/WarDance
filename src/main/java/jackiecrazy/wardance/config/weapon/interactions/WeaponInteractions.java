@@ -28,6 +28,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.lang.reflect.Type;
@@ -100,7 +101,13 @@ public class WeaponInteractions {
         private boolean no_flip = false;
         private boolean always_draw_next_weapon = false;
         private boolean debug = false;
+
         public InteractionGroup() {
+        }
+
+        public InteractionGroup withSwingEffect(HitEffects on_swing) {
+            this.on_swing = on_swing;
+            return this;
         }
 
         public boolean forceNextWeapon() {
@@ -206,11 +213,8 @@ public class WeaponInteractions {
     }
 
     public static abstract class WeaponInteraction {
-        public Vec3 getDrift() {
-            return drift;
-        }
+        private Vec3 drift = Vec3.ZERO;
 
-        private Vec3 drift=Vec3.ZERO;
         public WeaponInteraction() {
 
         }
@@ -231,6 +235,10 @@ public class WeaponInteractions {
                 }
             }
             return SweepAttack.NOTHING.clone();
+        }
+
+        public Vec3 getDrift() {
+            return drift;
         }
 
         public abstract InteractionType getInteractionType();
@@ -262,6 +270,54 @@ public class WeaponInteractions {
 
     public static class GroupDeserializer implements JsonDeserializer<InteractionGroup> {
 
+        public static Map<ResourceLocation, JsonElement> map = null;
+
+
+        private static @NotNull JsonElement preProcessInherit(JsonElement element) {
+            if (element.isJsonObject()) {
+                JsonObject obj = element.getAsJsonObject();
+                if (obj.has("inherit_from") && obj.get("inherit_from").isJsonPrimitive()) {
+                    String toInherit = obj.remove("inherit_from").getAsString();
+                    findParent:
+                    for (JsonElement v : map.values()) {
+                        final String searchTarget = toInherit.substring(0, toInherit.indexOf("-"));
+                        if (v.getAsJsonObject().has(searchTarget)) {
+                            JsonElement theSection = v.getAsJsonObject().get(searchTarget);
+                            final String[] targets = toInherit.split("-");
+                            for (int i = 1; i < targets.length; i++) {
+                                if (theSection.isJsonArray())
+                                    theSection = theSection.getAsJsonArray().get(Integer.parseInt(targets[i]));
+                                else if (theSection.isJsonObject())
+                                    theSection = theSection.getAsJsonObject().get(targets[i]);
+                                else {
+                                    throw new JsonParseException("inheritance hierarchy is not valid! " + toInherit + " stopped resolving at " + targets[i] + " yielding " + theSection);
+                                }
+                            }
+                            obj = JsonUtils.deepMerge(obj, theSection.getAsJsonObject());
+                            break findParent;
+                        }
+                    }
+                }
+                JsonObject copy = new JsonObject();
+
+                for (Map.Entry<String, JsonElement> e : obj.entrySet()) {
+                    copy.add(e.getKey(), preProcessInherit(e.getValue()));
+                }
+
+                return copy;
+            } else if (!element.isJsonArray()) {
+                return element;
+            } else {
+                JsonArray arr = new JsonArray();
+
+                for (JsonElement e : element.getAsJsonArray()) {
+                    arr.add(preProcessInherit(e));
+                }
+
+                return arr;
+            }
+        }
+
         @Override
         public InteractionGroup deserialize(JsonElement json,
                                             Type typeOfT,
@@ -269,12 +325,13 @@ public class WeaponInteractions {
             if (json.isJsonObject()) {
                 //could be either a full fledged def or just a single interaction, possibly containing overrides
                 //extract partial overrides first
-                final JsonObject baseObj = JsonUtils.parseSyntacticSugar(json).getAsJsonObject();
+                final JsonObject baseObj = preProcessInherit(JsonUtils.parseSyntacticSugar(json)).getAsJsonObject();
                 JsonElement overObj = baseObj.remove("overrides");
                 InteractionGroup ret = NAIVE.fromJson(baseObj, InteractionGroup.class);
                 if ((baseObj.has("type") || baseObj.has("sweep")) && ret.getInteractions().isEmpty()) {
                     ret.setInteractions(List.of(GSON.fromJson(json, WeaponInteraction.class)));
                 }
+
                 if (overObj != null && overObj.isJsonArray()) {
                     JsonArray overrides = overObj.getAsJsonArray();
                     for (JsonElement override : overrides.asList()) {

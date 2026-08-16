@@ -6,7 +6,11 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -79,26 +83,14 @@ public abstract class FiveElementFist extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        //swap
-        if (procPoint instanceof CriticalHitEvent lae && lae.getTarget() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
-            if (lae.getPhase() == EventPriority.HIGHEST) {
-                onStateChange(caster, stats, STATE.INACTIVE, STATE.ACTIVE);
-                ParticleUtils.playBonkParticle(caster.level(), caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0.5, 0.1, 8, getColor());
-            }
-        }
-        //unarmed attack
-        if (procPoint instanceof DamageKnockbackEvent lae && lae.getEntity() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
-            if (lae.getPhase() == EventPriority.HIGHEST) {
-                if (lae.getDamageSource() instanceof CombatDamageSource cds) {
-                    if (cds.getSkillUsed() != null) return;
-                    cds.setSkillUsed(this);
-                    cds.setProcSkillEffects(true);
-                }
-                lae.setStrength(0.15);
-                doAttack(caster, target);
-            }
+        if (procPoint instanceof PlayInteractionEvent.Interaction e && procPoint.getPhase() == EventPriority.HIGHEST && WeaponStats.isUnarmed(e.getStack(), caster)) {
+            onStateChange(caster, stats, STATE.INACTIVE, STATE.ACTIVE);
+            e.setInteraction(getSweep());
+            AerialModeData.getCap(caster).setAerialMode(30);
         }
     }
+
+    abstract WeaponInteractions.InteractionGroup getSweep();
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {

@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.event.EntityAwarenessEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
@@ -128,7 +129,7 @@ public class FrostFang extends WarCry {
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() == STATE.ACTIVE) {
             boolean ret = activeTick(stats);
-            if (stats.getDuration() <= 0) {
+            if (stats.getDuration() <= 0&& StylishData.getCap(caster).isCombatMode()) {
                 float luck = (float) caster.getAttributeValue(Attributes.LUCK);
                 float upperBound = Math.max(10+luck/2, 8.5f-luck+1);
                 float dur = WarDance.rand.nextFloat(8.5f-luck, upperBound);

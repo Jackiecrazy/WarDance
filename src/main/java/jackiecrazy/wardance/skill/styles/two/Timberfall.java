@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.styles.two;
 
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -39,6 +40,7 @@ public class Timberfall extends WarCry {
     }
 
     private static void plantTree(LivingEntity caster) {
+        if(!StylishData.getCap(caster).isCombatMode())return;
         TimberfallEntity fwe = new TimberfallEntity(WarEntities.TIMBER.get(), caster.level());
         fwe.setSkillUsed(WarSkills.TIMBERFALL.get()).setOwner(caster);
         Vec3 look = Vec3.ZERO.add(WarDance.rand.nextDouble() - 0.5, 0, WarDance.rand.nextDouble() - 0.5).scale(10).add(new Vec3(0, 7, 0));

@@ -110,6 +110,7 @@ public class WindScar extends WarCry {
     }
 
     private void windPressure(LivingEntity caster, SkillData d, int amount) {
+        if (!StylishData.getCap(caster).isCombatMode())return;
         if (d.getState() != STATE.ACTIVE) {
             d.setDuration(0);
             d.setMaxDuration(10);

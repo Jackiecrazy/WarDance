@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.flyingweapon;
 
+import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
@@ -14,6 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IFlyingWeapon {
+
+    List<FlyingItemEntity> getExtraWeapons(String type);
+
+    void addExtraWeapon(String type, FlyingItemEntity sb);
+
+    void dismissWeapons(String type);
     Optional<FlyingWeaponEntity> getWeapon(InteractionHand hand);
 
     ThrownWeaponEntity getHeldBlock();
@@ -54,6 +61,21 @@ public interface IFlyingWeapon {
     ThrownWeaponEntity yeet(InteractionHand hand, Vec3 pos, double strength);
 
     class DummyFlyingWeapon implements IFlyingWeapon {
+
+        @Override
+        public List<FlyingItemEntity> getExtraWeapons(String type) {
+            return List.of();
+        }
+
+        @Override
+        public void addExtraWeapon(String type, FlyingItemEntity sb) {
+
+        }
+
+        @Override
+        public void dismissWeapons(String type) {
+
+        }
 
         @Override
         public Optional<FlyingWeaponEntity> getWeapon(InteractionHand hand) {

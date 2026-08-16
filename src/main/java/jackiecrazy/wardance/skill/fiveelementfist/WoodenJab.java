@@ -1,45 +1,32 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.event.DamageKnockbackEvent;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.world.InteractionHand;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.utils.EasingFunctionEnum;
+import jackiecrazy.wardance.config.weapon.interactions.Animation;
+import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.UUID;
 
 public class WoodenJab extends FiveElementFist {
+    private static final List<MotionFrame> SWEEP = List.of(
+            new MotionFrame(new Vec3(0.0F, 0.0F, 1.0F),
+                            new Vec3(0.0F, 0.0F, 0.2F))
+                    .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON).setHit(new HitInfo(1.5, 1, 1, false, false, 1))),
+            new MotionFrame(new Vec3(0.0F, 0.0F, 1.0),
+                            new Vec3(0.0F, 0.0F, 1.0F)));
+    private static final MotionManager MANAGER = new MotionManagers.DefinitionMM(new MotionGroup(SWEEP, EasingFunctionEnum.IN_SINE, 5));
+    public static final WeaponInteractions.InteractionGroup GROUP = new Animation().setAction(MANAGER).asGroup();
 
     private static final UUID u = UUID.fromString("1896391d-0d6c-4a3e-a4b5-5e3c9d573b80");
 
     @Override
-    public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ENTITY_REACH.get(), u, CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) ? 1 : 0, AttributeModifier.Operation.ADDITION);
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_KNOCKBACK, u, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
-        return super.equippedTick(caster, stats);
-    }
-
-    @Override
-    public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ENTITY_REACH.get(), u, 0, AttributeModifier.Operation.ADDITION);
-        super.onUnequip(caster, stats);
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof DamageKnockbackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getEntity() == target) {
-            e.setStrength((float) (e.getOriginalStrength() * 1.5));
-        }
+    WeaponInteractions.InteractionGroup getSweep() {
+        return GROUP;
     }
 
     @Override

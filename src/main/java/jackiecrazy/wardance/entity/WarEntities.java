@@ -1,10 +1,7 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.entity.skill.BaseballEntity;
-import jackiecrazy.wardance.entity.skill.GrenadeEntity;
-import jackiecrazy.wardance.entity.skill.TimberfallEntity;
-import jackiecrazy.wardance.entity.skill.WindBladeEntity;
+import jackiecrazy.wardance.entity.skill.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.fml.common.Mod;
@@ -61,4 +58,12 @@ public class WarEntities {
             .of(TimberfallEntity::new, MobCategory.MISC)
             .sized(0.4F, 0.4F)
             .build("timber"));
+    public static final RegistryObject<EntityType<AsuraWeaponEntity>> ASURA = ENTITIES.register("asura", () -> EntityType.Builder
+            .of(AsuraWeaponEntity::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("asura"));
+    public static final RegistryObject<EntityType<BabylonWeaponEntity>> BABYLON = ENTITIES.register("bombarding_portal", () -> EntityType.Builder
+            .of(BabylonWeaponEntity::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("bombarding_portal"));
 }

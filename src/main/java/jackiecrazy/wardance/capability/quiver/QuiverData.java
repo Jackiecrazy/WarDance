@@ -19,12 +19,14 @@ import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QuiverData implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
@@ -106,6 +108,28 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
                 visibleSlots[quiver] = Math.max(1, needed);
             }
         }
+    }
+
+    public List<ItemStack> getAllQuiveredItems(int index) {
+        List<ItemStack> ret = new ArrayList<>();
+        if (index < 0 || index >= NUM_QUIVERS) {
+            //get everything!
+            for (int j = 0; j < NUM_QUIVERS; j++) {
+                IItemHandler quiver = getQuiver(j);
+                for (int i = 0; i < quiver.getSlots(); i++) {
+                    if (!quiver.getStackInSlot(i).isEmpty())
+                        ret.add(quiver.getStackInSlot(i));
+                }
+            }
+        } else {
+            //get the index
+            IItemHandler quiver = getQuiver(index);
+            for (int i = 0; i < quiver.getSlots(); i++) {
+                if (!quiver.getStackInSlot(i).isEmpty())
+                    ret.add(quiver.getStackInSlot(i));
+            }
+        }
+        return ret;
     }
 
     public int getVisibleSlots(int quiverIndex) {
@@ -194,7 +218,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
 
                 // no preferred colors? Try to get another slot in the same quiver, otherwise fail
                 else {
-                    preferredColor=getSelectedQuiver();
+                    preferredColor = getSelectedQuiver();
                     int emptySlot = -1;
                     for (int fuckmylife = 0; fuckmylife < quivers[preferredColor].getSlots(); fuckmylife++)
                         if (quivers[preferredColor].getStackInSlot(fuckmylife).isEmpty()) {

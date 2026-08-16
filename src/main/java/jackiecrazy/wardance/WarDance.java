@@ -11,6 +11,7 @@ import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.GrappleRenderer;
+import jackiecrazy.wardance.client.PortalRenderer;
 import jackiecrazy.wardance.client.hud.*;
 import jackiecrazy.wardance.client.screen.ponder.QuiverScreen;
 import jackiecrazy.wardance.client.screen.ponder.StudyTheBladeScreen;
@@ -201,6 +202,8 @@ public class WarDance {
         EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.WIND_BLADE.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.TIMBER.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.ASURA.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.BABYLON.get(), PortalRenderer::new);
         event.enqueueWork(() -> {
             MenuScreens.register(WarContainers.QUIVER_MENU.get(), QuiverScreen::new);
             MenuScreens.register(WarContainers.WEEB_MENU.get(), StudyTheBladeScreen::new);

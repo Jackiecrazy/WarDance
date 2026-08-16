@@ -250,7 +250,7 @@ public class GrappleEntity extends FlyingItemEntity {
         if (swinging()) {
             if (getTetherLength() >= 2) {
                 final double dist = Math.max(2, getTetherLength() - Math.min(1, hookedTicks * 0.2));
-                //setTetherLength(dist);
+                setTetherLength(dist);
             }
             swing();
         }
@@ -364,7 +364,7 @@ public class GrappleEntity extends FlyingItemEntity {
     }
 
     public boolean swinging() {
-        return !isRemoved() && hooked && getRetractAction() == ACTION.NONE;
+        return !isRemoved() && hooked && hookedHit!=null && getRetractAction() == ACTION.NONE;
     }
 
 

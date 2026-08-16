@@ -770,7 +770,7 @@ public class CombatUtils {
 
     public static void triggerSteveTime(LivingEntity from, int time, double strength) {
         //ZA WAAAAARUDO! TOKI WO TOMARE!
-        TimeSlowData.getCap(from).alterSpeed(time, strength);
+        //TimeSlowData.getCap(from).alterSpeed(time, strength);
         for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof FlyingItemEntity)))) {
             TimeSlowData.getCap(t).alterSpeed(time, strength);
             //jostle everything a tiny amount so you know the time slow is happening

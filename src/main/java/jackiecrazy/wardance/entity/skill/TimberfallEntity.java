@@ -126,7 +126,7 @@ public class TimberfallEntity extends ThrownWeaponEntity {
 
     private LivingEntity findNewTarget() {
         //find new target to hit
-        targets.addAll(level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(height), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(a -> !TargetingUtils.isAlly(a, getOwner()))));
+        targets.addAll(level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(height), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(a -> TargetingUtils.isHostile(a, getOwner()))));
         if (targets.isEmpty()) return getOwner();
         return targets.get(WarDance.rand.nextInt(targets.size()));
     }

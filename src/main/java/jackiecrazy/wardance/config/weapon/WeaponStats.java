@@ -3,10 +3,12 @@ package jackiecrazy.wardance.config.weapon;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
+import jackiecrazy.footwork.utils.JsonUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -37,10 +39,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.json.JsonString;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -89,14 +93,14 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         clientArchetypes = new HashMap<>(server);
     }
 
-    public static void updateItems(Map<ResourceLocation, JsonElement> object,
+    public static void updateItems(Map<ResourceLocation, JsonElement> wholeMap,
                                    ResourceManager rm,
                                    ProfilerFiller profiler) {
         DEFAULTMELEE = new WeaponInfo();
         combatList = new HashMap<>();
         archetypes = new HashMap<>();
 
-        object.forEach((key, value) -> {
+        wholeMap.forEach((key, value) -> {
             JsonObject file = value.getAsJsonObject();
             if (GeneralConfig.debug) WarDance.LOGGER.debug("loading " + key);
             file.entrySet().forEach(entry -> {
@@ -106,7 +110,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                         name = name.substring(1);
                         if (!name.contains(":")) name = "wardance:" + name;
                         JsonObject obj = entry.getValue().getAsJsonObject();
-                        WeaponInfo put = parseMeleeInfo(name, obj);
+                        WeaponInfo put = parseMeleeInfo(name, obj, wholeMap);
                         archetypes.put(ItemTags.create(new ResourceLocation(name)), put);
                     } catch (Exception x) {
                         WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -121,7 +125,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 }
                 try {
                     JsonObject obj = entry.getValue().getAsJsonObject();
-                    WeaponInfo put = parseMeleeInfo(name, obj);
+                    WeaponInfo put = parseMeleeInfo(name, obj, wholeMap);
                     //if (GeneralConfig.debug)
                     //WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getInteractionType() + " " + put.sweeps[1].getInteractionType() + " " + put.sweeps[2].getInteractionType() + " " + put.sweeps[3].getInteractionType() + " " + put.sweeps[4].getInteractionType() + " ");
                     combatList.put(item, put);
@@ -134,7 +138,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     @Nonnull
-    private static WeaponInfo parseMeleeInfo(String root, JsonObject obj) {
+    private static WeaponInfo parseMeleeInfo(String root, JsonObject obj, Map<ResourceLocation, JsonElement> map) {
         WeaponInfo put = WeaponInteractions.GSON.fromJson(obj, WeaponInfo.class);
         put.id = root;
         WeaponInteractions.InteractionGroup defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.InteractionGroup.class);

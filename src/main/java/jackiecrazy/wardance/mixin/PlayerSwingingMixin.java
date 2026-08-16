@@ -18,13 +18,13 @@ public class PlayerSwingingMixin {
 
     @Inject(method = "travel", at = @At("HEAD"))
     private void onTravel(Vec3 travelVector, CallbackInfo ci) {
-        Player player = (Player) (Object) this;
-        GrappleEntity hookEntity= FlyingWeaponData.getCap(player).getGrapple();
-
-        // --- HOOK HANDLING ---
-        if (hookEntity != null && hookEntity.swinging()) {
-            //MobilityUtils.swingin(hookEntity, player);
-        }
+//        Player player = (Player) (Object) this;
+//        GrappleEntity hookEntity= FlyingWeaponData.getCap(player).getGrapple();
+//
+//        // --- HOOK HANDLING ---
+//        if (hookEntity != null && hookEntity.swinging()) {
+//            //MobilityUtils.swingin(hookEntity, player);
+//        }
     }
 
 }

@@ -64,7 +64,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected Skill activeSkill=null;
     protected WeaponStats.AttackType attackType;
     protected Skill skillUsed = null;
-    private boolean fading = false;
+    protected boolean fading = false;
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
         //keep hitframes separate and logged here.
         //keep defense frames here?
@@ -115,8 +115,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     public void invalidateWhenDone() {
         fading = true;
-        setEffect(FlyingWeaponEffect.AFTERIMAGE, hasEffect(FlyingWeaponEffect.WEAPON));
-        setEffect(FlyingWeaponEffect.WEAPON, false);
+//        setEffect(FlyingWeaponEffect.AFTERIMAGE, hasEffect(FlyingWeaponEffect.WEAPON));
+//        setEffect(FlyingWeaponEffect.WEAPON, false);
     }
 
     public boolean fading() {

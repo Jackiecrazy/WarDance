@@ -34,6 +34,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.joml.Vector4d;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +50,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, 90)), 5),
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, -90)), 5)
     };
+    
     private static final Vec3[] idleOffset = {
             new Vec3(0.5, 0, 0.5), new Vec3(-0.5, 0, 0.5)
     };
@@ -57,6 +60,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     Player player;
     FlyingWeaponEntity main, off;
     ThrownWeaponEntity held;
+    HashMap<String, List<FlyingItemEntity>> extras=new HashMap<>();
     GrappleEntity grapple;
     boolean mainSwap, offSwap;
     private FlyingWeaponEffect[] mainFX, offFX;
@@ -68,6 +72,23 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         player = bind;
     }
 
+
+    @Override
+    public List<FlyingItemEntity> getExtraWeapons(String type) {
+        return extras.getOrDefault(type, List.of());
+    }
+
+    @Override
+    public void addExtraWeapon(String type, FlyingItemEntity sb) {
+        extras.putIfAbsent(type, new ArrayList<>());
+        extras.get(type).add(sb);
+    }
+
+    @Override
+    public void dismissWeapons(String type) {
+        getExtraWeapons(type).forEach(Entity::discard);
+        extras.remove(type);
+    }
 
     @Override
     public Optional<FlyingWeaponEntity> getWeapon(InteractionHand hand) {
@@ -295,9 +316,9 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         fwe.setOwner(player);
         Vec3 look = player.getLookAngle().reverse().normalize();
         Vec3 wtfPos = player.getEyePosition();
-        WarDance.LOGGER.debug("weapon is at " + fwe.position());
+        //WarDance.LOGGER.debug("weapon is at " + fwe.position());
         fwe.moveTo(wtfPos.add(look));
-        WarDance.LOGGER.debug("weapon should now be at " + fwe.position());
+        //WarDance.LOGGER.debug("weapon should now be at " + fwe.position());
         //fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
 
         //fwe.yeet(pos, strength);

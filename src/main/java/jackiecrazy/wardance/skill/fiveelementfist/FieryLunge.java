@@ -1,49 +1,44 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.DamageKnockbackEvent;
-import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
-import org.jetbrains.annotations.Nullable;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.utils.EasingFunctionEnum;
+import jackiecrazy.wardance.config.weapon.interactions.Animation;
+import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Vector4d;
 
-import java.util.UUID;
+import java.util.List;
 
 public class FieryLunge extends FiveElementFist {
-
-    private static final UUID u = UUID.fromString("1896391d-0d6c-4a3e-a4b5-5e3c9d573b80");
-
-    @Override
-    public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ENTITY_REACH.get(), u, CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) ? 2 : 0, AttributeModifier.Operation.ADDITION);
-        return super.equippedTick(caster, stats);
-    }
-
-    @Override
-    public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ENTITY_REACH.get(), u, 0, AttributeModifier.Operation.ADDITION);
-        super.onUnequip(caster, stats);
-    }
+    private static final List<MotionFrame> SWEEP = List.of(
+            new MotionFrame(new Vec3(0.0F, 0.0F, 1.0F),
+                            new Vec3(0.0F, 0.0F, 0.2F),
+                            new Vector4d(1.0, 0.4, 0, 0))
+                    .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON).setHit(new HitInfo(0, 1, 1, false, false, 1))),
+            new MotionFrame(new Vec3(0.0F, 0.0F, 1.0),
+                            new Vec3(0.0F, 0.0F, 1.0F),
+                            new Vector4d(1.0, 0.4, -0.2, 0)));
+    private static final MotionManager FIRE = new MotionManagers.DefinitionMM(new MotionGroup(SWEEP, EasingFunctionEnum.IN_SINE, 5));
+    public static final WeaponInteractions.InteractionGroup FIRE_LUNGE = new Animation().setAction(FIRE).asGroup().withSwingEffect(new HitEffects().setDodge_frames(10).setVelocity(new Vec3(0, 0, 0.5)));
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof DamageKnockbackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getEntity() == target) {
-            caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.17)));
-            CombatData.getCap(caster).setGuardTime((int) (10*caster.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
-            caster.hurtMarked = true;
-        }
+    WeaponInteractions.InteractionGroup getSweep() {
+        return FIRE_LUNGE;
     }
 
-    @Override
-    protected void doAttack(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, (int) (SkillUtils.getSkillEffectiveness(caster) * 10));
-    }
+//    @Override
+//    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+//        super.onProc(caster, procPoint, state, stats, target);
+//        if (procPoint instanceof DamageKnockbackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getEntity() == target) {
+//            caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.17)));
+//            CombatData.getCap(caster).setGuardTime((int) (10*caster.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
+//            caster.hurtMarked = true;
+//        }
+//    }
+//
+//    @Override
+//    protected void doAttack(LivingEntity caster, LivingEntity target) {
+//        CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, (int) (SkillUtils.getSkillEffectiveness(caster) * 10));
+//    }
 }

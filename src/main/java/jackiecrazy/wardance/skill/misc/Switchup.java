@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.misc;
 
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
@@ -31,13 +32,16 @@ public class Switchup extends Skill {
         if (event.getFrom().equals(event.getTo())) return;
         if (!event.getFrom().isEmpty() && (event.getFrom().equals(caster.getMainHandItem()) || event.getFrom().equals(caster.getOffhandItem())))
             return;
-        //todo make sure it's fresh
         WeaponStats.WeaponInfo previnfo = WeaponStats.lookupStats(event.getFrom());
         WeaponStats.WeaponInfo newinfo = WeaponStats.lookupStats(event.getTo());
-        if (previnfo == null || newinfo == null || !previnfo.getName().equals(newinfo.getName()))
-            if (event.getSlot() == EquipmentSlot.MAINHAND)
-                stats.setDuration(1);
-            else stats.setArbitraryFloat(1);
+        if (previnfo == null || newinfo == null || !previnfo.getName().equals(newinfo.getName())) {
+            if (StylishData.getCap(caster).getFreshness("wardance.sleight_of_hand.name") > 0) {
+                StylishData.getCap(caster).addCombo(0.05f, "wardance.sleight_of_hand.name");
+                if (event.getSlot() == EquipmentSlot.MAINHAND)
+                    stats.setDuration(1);
+                else stats.setArbitraryFloat(1);
+            }
+        }
     }
 
     @Override

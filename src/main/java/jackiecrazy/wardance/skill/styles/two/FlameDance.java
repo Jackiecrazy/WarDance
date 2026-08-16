@@ -4,6 +4,7 @@ import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.api.FootworkDamageTypeTags;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
@@ -88,6 +89,7 @@ public class FlameDance extends WarCry {
     }
 
     private void heatWave(LivingEntity caster, float amount) {
+        if (!StylishData.getCap(caster).isCombatMode())return;
         final double reach = caster.getAttributeValue(ForgeMod.ENTITY_REACH.get());
         for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(reach * 2))) {
             if (GeneralUtils.getDistSqCompensated(caster, e) < reach * reach && TargetingUtils.isHostile(e, caster)) {

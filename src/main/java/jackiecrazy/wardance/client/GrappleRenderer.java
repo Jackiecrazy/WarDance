@@ -2,15 +2,12 @@ package jackiecrazy.wardance.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
-import jackiecrazy.wardance.entity.GrappleEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -21,8 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.awt.*;
@@ -47,41 +42,6 @@ public class GrappleRenderer extends ItemEntityRenderer {
         super(ctx);
     }
 
-    private static float fraction(int p_114691_, int p_114692_) {
-        return (float) p_114691_ / (float) p_114692_;
-    }
-
-    private static void vertex(VertexConsumer p_254464_,
-                               Matrix4f p_254085_,
-                               Matrix3f p_253962_,
-                               int p_254296_,
-                               float p_253632_,
-                               int p_254132_,
-                               int p_254171_,
-                               int p_254026_) {
-        p_254464_.vertex(p_254085_, p_253632_ - 0.5F, (float) p_254132_ - 0.5F, 0.0F).color(255, 255, 255, 255).uv((float) p_254171_, (float) p_254026_).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(p_254296_).normal(p_253962_, 0.0F, 1.0F, 0.0F).endVertex();
-    }
-
-    private static void stringVertex(float p_174119_,
-                                     float p_174120_,
-                                     float p_174121_,
-                                     VertexConsumer p_174122_,
-                                     PoseStack.Pose p_174123_,
-                                     float p_174124_,
-                                     float p_174125_) {
-        float f = p_174119_ * p_174124_;
-        float f1 = p_174120_ * (p_174124_ * p_174124_ + p_174124_) * 0.5F + 0.25F;
-        float f2 = p_174121_ * p_174124_;
-        float f3 = p_174119_ * p_174125_ - f;
-        float f4 = p_174120_ * (p_174125_ * p_174125_ + p_174125_) * 0.5F + 0.25F - f1;
-        float f5 = p_174121_ * p_174125_ - f2;
-        float f6 = Mth.sqrt(f3 * f3 + f4 * f4 + f5 * f5);
-        f3 /= f6;
-        f4 /= f6;
-        f5 /= f6;
-        p_174122_.vertex(p_174123_.pose(), f, f1, f2).color(0, 0, 0, 255).normal(p_174123_.normal(), f3, f4, f5).endVertex();
-    }
-
     private static Vec3 cubicBezier(Vec3 p0, Vec3 p1, Vec3 p2, Vec3 p3, float t) {
         float u = 1f - t;
         float tt = t * t;
@@ -95,31 +55,6 @@ public class GrappleRenderer extends ItemEntityRenderer {
                 .add(p3.scale(ttt));              // t^3 * P3
 
         return result;
-    }
-
-    private static void lineVertex(
-            VertexConsumer consumer,
-            PoseStack.Pose pose,
-            Vec3 a,
-            Vec3 b,
-            Color c,
-            int light
-    ) {
-
-        Matrix4f mat = pose.pose();
-        Matrix3f norm = pose.normal();
-
-        consumer.vertex(mat, (float) a.x, (float) a.y, (float) a.z)
-                .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha())
-                .normal(norm, 0, 1, 0)
-                .uv2(light)
-                .endVertex();
-
-        consumer.vertex(mat, (float) b.x, (float) b.y, (float) b.z)
-                .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha())
-                .normal(norm, 0, 1, 0)
-                .uv2(light)
-                .endVertex();
     }
 
     @Override

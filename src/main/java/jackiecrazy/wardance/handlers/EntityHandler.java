@@ -198,7 +198,7 @@ public class EntityHandler {
             ITimeChange itc = TimeSlowData.getCap(o.getOwner());
             if (itc.getEffectiveSpeed() != 1)
                 TimeSlowData.getCap(e.getEntity()).alterSpeed(itc.getTimeRemaining(), itc.getEffectiveSpeed());
-            //fixme it seems to be impossible to attach this to an arrow upon its spawn
+
         }
     }
 

@@ -1,5 +1,10 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.utils.EasingFunctionEnum;
+import jackiecrazy.wardance.config.weapon.interactions.Animation;
+import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -16,11 +21,27 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class IronChop extends FiveElementFist {
+
+    private static final List<MotionFrame> SWEEP = List.of(
+            new MotionFrame(new Vec3(0.0F, 1.0F, 0.3F),
+                            new Vec3(0.0F, 0.0F, 1.0F))
+                    .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON).setHit(new HitInfo(2, 1, 1, false, false, 1).withKBDir(new Vec3(0,-2,0)))),
+            new MotionFrame(new Vec3(0.0F, 0.0F, 1.0),
+                            new Vec3(0.0F, 0.0F, 1.0F))
+                    .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)),
+            new MotionFrame(new Vec3(0.0F, -0.2F, 1.0F),
+                            new Vec3(0.0F, 0.0F, 1.0F)));
+    private static final MotionManager IRON = new MotionManagers.DefinitionMM(new MotionGroup(SWEEP, EasingFunctionEnum.IN_SINE, 5));
+    public static final WeaponInteractions.InteractionGroup IRON_CHOP = new Animation().setAction(IRON).asGroup().withSwingEffect(new HitEffects().setVelocity(new Vec3(0, -0.3, 0)));
+
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof MeleePostureEvent.Defense e && e.getEntity() == caster && e.success() && procPoint.getPhase() == EventPriority.HIGHEST && stats.isCondition()) {
+        if (procPoint instanceof MeleePostureEvent.Block e && e.getEntity() == caster && procPoint.getPhase() == EventPriority.HIGHEST && stats.isCondition()) {
             e.setPostureConsumption(0);
+            e.setResult(Event.Result.ALLOW);
             if (caster.level() instanceof ServerLevel s)
                 for (int reps = 0; reps < 40; reps++) {
                     Vec3 startAt = caster.position().add((((caster.tickCount+reps) * 5) % caster.getBbWidth()) - caster.getBbWidth() / 2, (((caster.tickCount+reps) * 31) % caster.getBbHeight()), (((caster.tickCount+reps) * 17) % caster.getBbWidth()) - caster.getBbWidth() / 2);
@@ -29,30 +50,11 @@ public class IronChop extends FiveElementFist {
                 }
             stats.flagCondition(false);
         }
-        if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
-            mark(caster, target, 1, SkillUtils.getSkillEffectiveness(caster));
-        }
         super.onProc(caster, procPoint, state, stats, target);
     }
 
     @Override
-    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING)//swap in
-            prev.flagCondition(true);
-        return super.onStateChange(caster, prev, from, to);
-    }
-
-    @Override
-    protected void doAttack(LivingEntity caster, LivingEntity target) {
-        target.setDeltaMovement(target.getDeltaMovement().add(0, -2*SkillUtils.getSkillEffectiveness(caster), 0));
-        target.fallDistance += 5 * SkillUtils.getSkillEffectiveness(caster);
-    }
-
-    @Override
-    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        removeMark(target);
-        target.setDeltaMovement(target.getDeltaMovement().add(0, -1 * SkillUtils.getSkillEffectiveness(caster), 0));
-        target.hurtMarked = true;
-        return super.markTick(caster, target, sd);
+    WeaponInteractions.InteractionGroup getSweep() {
+        return IRON_CHOP;
     }
 }
