@@ -1,0 +1,26 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wardance:item/projectile/swordbeam"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "type": 1
+      },
+      "model": "wardance:item/projectile/dart"
+    },
+    {
+      "predicate": {
+        "type": 2
+      },
+      "model": "wardance:item/projectile/swordbeam"
+    },
+    {
+      "predicate": {
+        "type": 3
+      },
+      "model": "wardance:item/projectile/mdzgh"
+    }
+  ]
+}
