@@ -215,8 +215,6 @@ public class QuiverDisplay implements IGuiOverlay {
         if (inventory == null || d == null) return;
         prevAngle = mouseAngle;
         updateSelectionFromMouse(mouseAngle);
-        //find the index stack and 2 before/after it
-        //draw them on the screen
         int size = filledSlots.size();
         int max = size;//Mth.clamp(size, 0, 2);
         float angle = -90;
@@ -252,19 +250,10 @@ public class QuiverDisplay implements IGuiOverlay {
                           angle - 30,
                           angle + 30,
                           c.getRed(), c.getGreen(), c.getBlue(), 180);  // nice visible color + some transparency
-                //GuiComponent.blit(guiGraphics.pose(), CIRCLE, width / 2 + x - 33, height / 2 + y - 33, 0, 0, 64, 64, 64, 64);
-                //RenderSystem.setShaderColor(1, 1, 1, 1);
                 scale = 2;
             }
             renderItem(guiGraphics, stack, width / 2 + x, height / 2 + y, scale);
             angle += (360f / (size));
         }
-//        float step = (float)(2 * Math.PI / 3);
-//        float centerAngle = -Mth.HALF_PI; // top
-//
-//        float a0 = centerAngle - step / 2f;
-//        float a1 = centerAngle + step / 2f;
-//        drawSlice(guiGraphics, width/2f, height/2f, 10, 200, 400, a0, a1, 256,256,256,180);
-        //forward index to packet when needed
     }
 }

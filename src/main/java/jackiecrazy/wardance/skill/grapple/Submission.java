@@ -14,7 +14,7 @@ public class Submission extends Grapple {
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
-        if(!cast(caster, target, -999))return;
+        if(!cast(caster, target))return;
         final float armor = caster.getArmorValue() / 4f;
         float consume = 7 + armor;
         consume *= stats.getEffectiveness();

@@ -196,6 +196,7 @@ public class StylishCapability implements IStyleCapability {
             if (!(guy instanceof FakePlayer) && guy instanceof ServerPlayer sp)
                 CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientStylePacket(guy.getId(), write()));
 
+            dirty=false;
         }
     }
 
@@ -232,6 +233,8 @@ public class StylishCapability implements IStyleCapability {
         //reset combo timer even if too stale
         refresh();
         //too stale!
+        freshness.add(source);
+        markDirty();
         if (amount <= 0) return;
         if (dude.get() instanceof Player le) {
             //fully rally if super duper fresh
@@ -252,7 +255,6 @@ public class StylishCapability implements IStyleCapability {
         }
         combo += amount;
         addAdrenaline(amount / 6);
-        freshness.add(source);
         while (freshness.size() > TRACKED_FRESHNESS_ACTIONS) {
             freshness.poll();
         }
@@ -416,6 +418,7 @@ public class StylishCapability implements IStyleCapability {
         hitTimer = t.getInt("hit");
         ListTag fresh = t.getList("freshness", Tag.TAG_STRING);
         if(!fresh.isEmpty())freshness.clear();
+        Collections.reverse(fresh);
         for(Tag s:fresh){
             if(s instanceof StringTag st){
                 freshness.add(st.getAsString());

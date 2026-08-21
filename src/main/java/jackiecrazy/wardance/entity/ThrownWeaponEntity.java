@@ -6,7 +6,6 @@ import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.ActionSetWrapper;
 import jackiecrazy.footwork.move.action.Action;
-import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
@@ -15,7 +14,6 @@ import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
@@ -107,11 +105,6 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         if (fake && noCosmetics()) {
             setEffect(FlyingWeaponEffect.BIG_SHADOW);
         } //else setEffect(FlyingWeaponEffect.WEAPON);
-        return this;
-    }
-
-    public ThrownWeaponEntity setHitInfo(HitInfo hi) {
-        cacheInfo = hi;
         return this;
     }
 
@@ -308,15 +301,18 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         return false;
     }
 
-    private boolean ricochet() {
+    @SafeVarargs
+    public final boolean ricochet(Class<? extends Entity>... ignore) {
         if (bounce <= 0) {
             return false;
         }
-        final List<Entity> candidates = level().getEntities(this, this.getBoundingBox().inflate(8), (a ->
-                a instanceof LivingEntity && !GeneralUtils.viewBlocked(this, a, false) && !TargetingUtils.isAlly(this, a)));
+        List<Class<?extends Entity>> ig=List.of(ignore);
         Entity lastHit = alreadyHit.isEmpty() ? null : alreadyHit.get(alreadyHit.size() - 1);
+        final List<Entity> candidates = level().getEntities(this, this.getBoundingBox().inflate(8), (a ->
+                (a instanceof LivingEntity||(a instanceof IRicochetPriority ip&&ip.isValidRicochetTarget())) && !GeneralUtils.viewBlocked(this, a, false) && !TargetingUtils.isAlly(this, a)&&!ig.contains(a.getClass())));
         Entity target = candidates.stream().filter(a -> a != lastHit)
                 .min(Comparator.comparingInt(alreadyHit::indexOf)
+                             .thenComparingInt(a-> a instanceof IRicochetPriority?0:1)
                              .thenComparingDouble(a -> (pierce > 0 ? -1 : 1) * ((Entity) a).distanceToSqr(this)))//prefer far mobs if there is still pierce, otherwise close mobs
                 .orElse(null);//prioritize targets that have not been hit recently
         if (target != null) {

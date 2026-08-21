@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,13 +12,27 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraftforge.eventbus.api.Event;
+
+import java.util.HashSet;
 
 public class ItchyCurse extends Hex {
+    @Override
+    public HashSet<String> getTags() {
+        return passive;
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if(procPoint instanceof MeleePostureEvent.Block bl&&stats.getState()==STATE.INACTIVE && bl.getAttacker()!=null && bl.success()&&cast(caster, -999)) {
+            mark(caster, target, duration());
+        }
+    }
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = SkillUtils.aimLiving(caster);
-        if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
+        if (to == STATE.ACTIVE && target != null && cast(caster, target)) {
             mark(caster, target, 6);
             markUsed(caster);
             if (caster.level() instanceof ServerLevel sl) {

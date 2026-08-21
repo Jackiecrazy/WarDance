@@ -151,6 +151,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         return this;
     }
 
+    public FlyingWeaponEntity setHitInfo(HitInfo hi) {
+        cacheInfo = hi;
+        return this;
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -196,6 +201,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     @Override
     protected boolean onHitEntity(List<Entity> targets) {
+        setSilent(true);
         boolean ret = false;
         //don't do any of this on the client because that's not good:tm:
         if (level().isClientSide()) return false;
@@ -212,6 +218,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         if (targets.isEmpty()) return ret;
         animProgress -= getWeight() / 2;
         ItemStack main = owner.getMainHandItem();
+        //boolean silent=getOwner().isSilent();
+        //getOwner().setSilent(true);
         try {
             CombatUtils.setAttackType(owner, attackType);
             CombatUtils.quickSwap(owner, getHeldItem());
@@ -242,6 +250,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 //            else WarDance.LOGGER.warn("detected that held item is now different, aborting swap back");
             owner.attackStrengthTicker = ticks;
             WeaponStats.info_override = null;
+            //getOwner().setSilent(silent);
         }
         return ret;
     }
@@ -253,6 +262,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 .setAttackingHand(flipClientRender() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND)
                 .setDamageDealer(getHeldItem())
                 .setProcNormalEffects(true).setProcAttackEffects(true)
+                .setSkillUsed(skillUsed)
                 .setDamageTyping(FootworkDamageArchetype.PHYSICAL);
         if (getInfo() != null)
             for (String s : getInfo().damage_tags) {
@@ -329,6 +339,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     @Override
     protected void returnToIdle(int ticks) {
+//        unlock();//todo does this break anything
         super.returnToIdle(ticks);
         payload.clear();
         setDeltaMovement(Vec3.ZERO);
@@ -424,7 +435,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         setTetheringEntity(target);
         getEntityData().set(DRAG_TIME, duration);
         int snapTime = 5;
-        if (target instanceof LivingEntity e) {
+        if (target instanceof LivingEntity e&& getOwner() != null) {
             double fighting = Mth.clamp(CombatData.getCap(e).getMaxPosture() / (CombatData.getCap(getOwner()).getMaxPosture() * strength), 1, 20);
             fighting *= fighting;
             snapTime = (int) (fighting * 6);

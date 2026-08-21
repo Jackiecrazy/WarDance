@@ -24,6 +24,35 @@ import net.minecraftforge.fml.common.Mod;
 public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void effL(MobEffectEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntity());
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+        if(e instanceof MobEffectEvent.Added a&& a.getEffectSource() instanceof LivingEntity caster){
+            final ISkillCapability cast = CasterData.getCap(e.getEntity());
+            for (Skill s : cast.getEquippedSkillsAndStyle()) {
+                cast.getSkillData(s).ifPresent(d -> s.onProc(caster, e, d.getState(), d, e.getEntity()));
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void effH(MobEffectEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntity());
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+        if(e instanceof MobEffectEvent.Added a&& a.getEffectSource() instanceof LivingEntity caster){
+            final ISkillCapability cast = CasterData.getCap(e.getEntity());
+            for (Skill s : cast.getEquippedSkillsAndStyle()) {
+                cast.getSkillData(s).ifPresent(d -> s.onProc(caster, e, d.getState(), d, e.getEntity()));
+            }
+        }
+    }
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void grapL(GrappleEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());

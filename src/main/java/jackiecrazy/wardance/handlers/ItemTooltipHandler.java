@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.client.Keybinds;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.permission.PermissionData;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;
@@ -48,15 +49,12 @@ public class ItemTooltipHandler {
                     else
                         e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def*100)+"%").withStyle(ChatFormatting.DARK_GREEN)));
                 }
+                if(QuiverData.getPreferredColor(stack)>=0){
+                    int color = QuiverData.getPreferredColor(stack);
+                    int ordinal = QuiverData.getPreferredSlot(stack)+1;
+                    e.getToolTip().add(Component.translatable("wardance.tooltip.quiverSlot", ordinal).withStyle(QuiverData.ORDER[color].getFormattings()));
+                }
                 if (PermissionData.getCap(entity).canSweep()) {
-                    //final Component standing = WeaponStats.getSweepInfo(stack, entity, WeaponStats.AttackType.STANDING, false).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
-//                    for (WeaponStats.AttackType s : WeaponStats.AttackType.values()) {
-//                        if (s == WeaponStats.AttackType.UNDEFINED) continue;
-//                        final Component sweepGroup = Component.translatable(WeaponStats.lookupStats(stack).getName()+"."+s.name().toLowerCase(Locale.ROOT)+".name");
-//                        if(sweepGroup==null) e.getToolTip().add(Component.literal("no sweep!?"));
-////                        if (s == WeaponStats.AttackType.STANDING || !sweepGroup.equals(standing))
-//                        else e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), sweepGroup.copy().withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
-//                    }
                     e.getToolTip().add(Component.translatable("wardance.tooltip.weaponMoves", Keybinds.SELECT.getKey().getDisplayName()).withStyle(ChatFormatting.GREEN));
                 }
             } else {

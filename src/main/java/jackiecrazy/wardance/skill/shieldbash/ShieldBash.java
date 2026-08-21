@@ -80,7 +80,7 @@ public class ShieldBash extends Skill {
             if (stats.getState() == STATE.COOLING && !CasterData.getCap(caster).isTagActive("shield"))
                 stats.decrementDuration();
             final boolean otherwise = state == STATE.HOLSTERED;
-            if ((base || otherwise)) cast(caster, target, -999);
+            if ((base || otherwise)) cast(caster, target);
         }
         if (procPoint instanceof MeleePostureEvent.Defense e && e.getAttacker() == caster && e.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             e.setPostureConsumption(performEffect(caster, target, e.getPostureConsumption() * stats.getEffectiveness()));

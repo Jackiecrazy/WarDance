@@ -68,7 +68,7 @@ public class Kick extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = SkillUtils.aimLiving(caster, getAimRange(caster, prev));
-        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, target)) {
             CombatUtils.kick(caster, target, false);
             additionally(caster, target, prev);
             return true;

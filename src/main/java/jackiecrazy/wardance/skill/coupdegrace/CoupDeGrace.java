@@ -114,24 +114,24 @@ public class CoupDeGrace extends Skill {
                 }
             }
         }
-        if (state == STATE.ACTIVE && stats.getDuration() < 0 && this == WarSkills.DECAPITATE.get() && procPoint.getPhase() == EventPriority.LOWEST) {
-            if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntity() == target) {
-                ItemStack drop = GeneralUtils.dropSkull(target);
-                if (drop == null) return;
-                //don't dupe skulls
-                for (ItemEntity i : ((LivingDropsEvent) procPoint).getDrops()) {
-                    if (i.getItem().getItem() == drop.getItem() && (!(target instanceof Player) || i.getItem().getOrCreateTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
-                        return;
-                }
-                ItemEntity forceSkull = new ItemEntity(target.level(), target.getX(), target.getY(), target.getZ(), drop);
-                forceSkull.setDefaultPickUpDelay();
-                ((LivingDropsEvent) procPoint).getDrops().add(forceSkull);
-            }
-
-            if (procPoint instanceof LootingLevelEvent && ((LootingLevelEvent) procPoint).getEntity() == target && GeneralUtils.dropSkull(target) == null) {
-                ((LootingLevelEvent) procPoint).setLootingLevel(((LootingLevelEvent) procPoint).getLootingLevel() + 3);
-            }
-        }
+//        if (state == STATE.ACTIVE && stats.getDuration() < 0 && this == WarSkills.DECAPITATE.get() && procPoint.getPhase() == EventPriority.LOWEST) {
+//            if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntity() == target) {
+//                ItemStack drop = GeneralUtils.dropSkull(target);
+//                if (drop == null) return;
+//                //don't dupe skulls
+//                for (ItemEntity i : ((LivingDropsEvent) procPoint).getDrops()) {
+//                    if (i.getItem().getItem() == drop.getItem() && (!(target instanceof Player) || i.getItem().getOrCreateTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
+//                        return;
+//                }
+//                ItemEntity forceSkull = new ItemEntity(target.level(), target.getX(), target.getY(), target.getZ(), drop);
+//                forceSkull.setDefaultPickUpDelay();
+//                ((LivingDropsEvent) procPoint).getDrops().add(forceSkull);
+//            }
+//
+//            if (procPoint instanceof LootingLevelEvent && ((LootingLevelEvent) procPoint).getEntity() == target && GeneralUtils.dropSkull(target) == null) {
+//                ((LootingLevelEvent) procPoint).setLootingLevel(((LootingLevelEvent) procPoint).getLootingLevel() + 3);
+//            }
+//        }
     }
 
     @Override

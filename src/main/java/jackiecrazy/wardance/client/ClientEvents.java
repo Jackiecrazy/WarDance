@@ -337,9 +337,6 @@ public class ClientEvents {
 
                     //right click if the action is appropriate
                     // If evoke is held, only right click
-                    if (CombatUtils.getAttackState(p) == WeaponStats.AttackType.UNDEFINED)
-                        CombatUtils.updateNormalAttackStatus(p);
-                    final WeaponStats.AttackType state = CombatUtils.getAttackState(p);
 
                     if (mc.options.keyAttack.isDown()) {
                         //special charge action, immediately start
@@ -347,6 +344,9 @@ public class ClientEvents {
                             //hack. Spoof use item key to down for the keybind processing
                             mc.options.keyUse.setDown(true);
                         } else {
+                            if (CombatUtils.getAttackState(p) == WeaponStats.AttackType.UNDEFINED)
+                                CombatUtils.updateNormalAttackStatus(p);
+                            final WeaponStats.AttackType state = CombatUtils.getAttackState(p);
                             final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(p.getMainHandItem(), p, state, false, InteractionHand.MAIN_HAND);
                             if (!p.isUsingItem() && !p.getCooldowns().isOnCooldown(p.getMainHandItem().getItem()) && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
                                 testingHand = InteractionHand.MAIN_HAND;

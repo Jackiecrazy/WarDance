@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 public class Afterimage extends IronGuard {
     @Override
     protected void parry(LivingEntity caster, ConsumePostureEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
-        if (state == STATE.COOLING || !cast(caster, target, -999)) return;
+        if (state == STATE.COOLING || !cast(caster, target)) return;
         if(procPoint.getType()== ConsumePostureEvent.TYPE.PARRY&&procPoint.success()) {
             final float cost = procPoint.getPostureConsumption() * stats.getEffectiveness();
             SkillUtils.createCloud(caster.level(), caster, caster.getX(), caster.getY(), caster.getZ(), cost, ParticleTypes.LARGE_SMOKE);

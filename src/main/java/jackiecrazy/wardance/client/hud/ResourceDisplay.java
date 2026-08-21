@@ -411,6 +411,10 @@ public class ResourceDisplay implements IGuiOverlay {
                     x=pair.getFirst()+16;
                     y+=1;
                     for(String s:style.getFreshness()){
+                        if(action.isEmpty()){
+                            action=s;
+                            continue;
+                        }
                         if(!action.equals(s)) {
                             int color = ClientConfig.adrenalineColor;
                             y += gui.getFont().lineHeight;
@@ -425,6 +429,16 @@ public class ResourceDisplay implements IGuiOverlay {
                             streak=1;
                         }else streak++;
                     }
+                    int color = ClientConfig.adrenalineColor;
+                    y += gui.getFont().lineHeight;
+                    String toPrint = Component.translatable(action.split(" ")[0]).getString();
+                    int atX=x-mc.font.width(toPrint);
+                    if(streak>1){
+                        toPrint+=" x"+streak;
+                    }
+                    if(style.getFreshness(action)<=0)color=STALE;
+                    graphics.drawString(gui.getFont(), toPrint, atX, y, color);
+
                 }
 
                 stack.popPose();

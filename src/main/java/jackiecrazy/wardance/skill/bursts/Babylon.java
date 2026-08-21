@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.bursts;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.event.GainAdrenalineEvent;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
@@ -13,7 +14,7 @@ import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.WarEntities;
-import jackiecrazy.wardance.entity.skill.BabylonWeaponEntity;
+import jackiecrazy.wardance.entity.skill.BabylonPortal;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
@@ -97,7 +98,7 @@ public class Babylon extends Skill {
                 List<LivingEntity> targets = new ArrayList<>(stats.getTargets());
                 Collections.shuffle(portals);
                 portals.stream().filter(FlyingItemEntity::isIdle).findAny().ifPresent(a->{
-                    BabylonWeaponEntity portal = (BabylonWeaponEntity) a;
+                    BabylonPortal portal = (BabylonPortal) a;
                     Entity target = targets.get(WarDance.rand.nextInt(targets.size()));
 
                     // fire the projectile
@@ -121,6 +122,9 @@ public class Babylon extends Skill {
                 e.setDuration(e.getDuration() - 100);
             } else if (procPoint instanceof PlayInteractionEvent.Post e)
                 e.setCooldown(e.getOriginalState() == WeaponStats.AttackType.THROW ? 1 : 0.5);
+            if (procPoint instanceof GainAdrenalineEvent gme) {
+                gme.setQuantity(0);
+            }
         }
     }
 
@@ -156,7 +160,7 @@ public class Babylon extends Skill {
         //create portals behind you
         for (int i = -3; i < 3; i++) {
             for (int j = 0; j < 2; j++) {
-                BabylonWeaponEntity awe = new BabylonWeaponEntity(WarEntities.BABYLON.get(), caster.level());
+                BabylonPortal awe = new BabylonPortal(WarEntities.BABYLON.get(), caster.level());
                 awe.setCosmeticItem(new RenderItemGroup(
                         new RenderNode.BlockNode(Blocks.NETHER_PORTAL.defaultBlockState(), new Vec3(90, 0, 0), new Vec3(0,-0.5,0)),
                         new RenderNode.BlockNode(Blocks.NETHER_PORTAL.defaultBlockState(), new Vec3(90, 0, 30), new Vec3(0,-0.5,0)),

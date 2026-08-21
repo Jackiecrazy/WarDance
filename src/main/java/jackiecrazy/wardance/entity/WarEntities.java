@@ -62,8 +62,20 @@ public class WarEntities {
             .of(AsuraWeaponEntity::new, MobCategory.MISC)
             .sized(0.4F, 0.4F)
             .build("asura"));
-    public static final RegistryObject<EntityType<BabylonWeaponEntity>> BABYLON = ENTITIES.register("bombarding_portal", () -> EntityType.Builder
-            .of(BabylonWeaponEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<BabylonPortal>> BABYLON = ENTITIES.register("mirage_portal", () -> EntityType.Builder
+            .of(BabylonPortal::new, MobCategory.MISC)
             .sized(0.4F, 0.4F)
-            .build("bombarding_portal"));
+            .build("mirage_portal"));
+    public static final RegistryObject<EntityType<ExcaliburEntity>> EXCALIBUR = ENTITIES.register("excalibur", () -> EntityType.Builder
+            .of(ExcaliburEntity::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("excalibur"));
+    public static final RegistryObject<EntityType<EchoWeapon>> ECHO = ENTITIES.register("echo", () -> EntityType.Builder
+            .of(EchoWeapon::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("echo"));
+    public static final RegistryObject<EntityType<JackpotCoin>> COIN = ENTITIES.register("coin", () -> EntityType.Builder
+            .of(JackpotCoin::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("coin"));
 }

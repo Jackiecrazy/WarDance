@@ -22,9 +22,7 @@ import jackiecrazy.wardance.skill.ironguard.*;
 import jackiecrazy.wardance.skill.judgment.ViralDecay;
 import jackiecrazy.wardance.skill.kick.*;
 import jackiecrazy.wardance.skill.mementomori.*;
-import jackiecrazy.wardance.skill.misc.FatalCadence;
-import jackiecrazy.wardance.skill.misc.Pounce;
-import jackiecrazy.wardance.skill.misc.Switchup;
+import jackiecrazy.wardance.skill.misc.*;
 import jackiecrazy.wardance.skill.projectile.Countershot;
 import jackiecrazy.wardance.skill.projectile.Ripper;
 import jackiecrazy.wardance.skill.regenspirit.*;
@@ -103,6 +101,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> ACROBATICS = SKILLS.register("acrobatics", () -> new Acrobatics().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> ASURA = SKILLS.register("asuras_wrath", () -> new Asura().setCategory(SkillColors.red).setChallenge());
     public static final RegistryObject<Skill> BABYLON = SKILLS.register("mirage_treasury", () -> new Babylon().setCategory(SkillColors.cyan));
+    public static final RegistryObject<Skill> RISING_VENGEANCE = SKILLS.register("rising_vengeance", () -> new RisingVengeance().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> BLOODLUST = SKILLS.register("bloodlust", () -> new MementoMori().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> CONFIDENCE = SKILLS.register("confidence", () -> new Confidence().setCategory(SkillColors.green));
     ///public static final RegistryObject<Skill> CROWN_CHAMPION = SKILLS.register("crown_champion", () -> new CrownChampion().setCategory(SkillColors.white));
@@ -110,15 +109,18 @@ public class WarSkills {
     public static final RegistryObject<Skill> CURSE_OF_ECHOES = SKILLS.register("curse_of_echoes", () -> new Hex.CurseOfEchoes().setCategory(SkillColors.purple));
     public static final RegistryObject<Skill> CURSE_OF_MISFORTUNE = SKILLS.register("curse_of_misfortune", () -> new Hex().setCategory(SkillColors.purple));
     //public static final RegistryObject<Skill> DANSE_MACABRE = SKILLS.register("danse_macabre", () -> new CoupDeGrace.DanseMacabre().setCategory(SkillColors.gray));
-    public static final RegistryObject<Skill> DECAPITATE = SKILLS.register("decapitate", () -> new CoupDeGrace().setCategory(SkillColors.gold));
+//    public static final RegistryObject<Skill> DECAPITATE = SKILLS.register("decapitate", () -> new CoupDeGrace().setCategory(SkillColors.gold));
     public static final RegistryObject<Skill> EARTHEN_SWEEP = SKILLS.register("earthen_sweep", () -> new EarthenSweep().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> FATAL_CADENCE = SKILLS.register("fatal_cadence", () -> new FatalCadence().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> FIERY_LUNGE = SKILLS.register("fiery_lunge", () -> new FieryLunge().setCategory(SkillColors.red));
-    public static final RegistryObject<Skill> FLURRY = SKILLS.register("flurry", () -> new Flurry().setCategory(SkillColors.azure));
+    //public static final RegistryObject<Skill> FLURRY = SKILLS.register("flurry", () -> new Flurry().setCategory(SkillColors.azure));
+    public static final RegistryObject<Skill> JACKPOT = SKILLS.register("jackpot_marksman", () -> new JackpotMarksman().setCategory(SkillColors.gold));
+    public static final RegistryObject<Skill> IRON_WALTZ = SKILLS.register("iron_pirouette", () -> new IronWaltz().setCategory(SkillColors.azure));
     public static final RegistryObject<Skill> TIME_STOP = SKILLS.register("time_stop", () -> new TimeStop().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> FOLLOWUP = SKILLS.register("followup", () -> new Feint().setCategory(SkillColors.white));
     //public static final RegistryObject<Skill> FOOT_SLAM = SKILLS.register("foot_slam", () -> new ShieldBash.FootSlam().setCategory(SkillColors.gray));
     ///public static final RegistryObject<Skill> FRENZY = SKILLS.register("frenzy", () -> new CoupDeGrace.Frenzy().setCategory(SkillColors.azure));
+    public static final RegistryObject<Skill> SALT_THE_WOUND = SKILLS.register("salt_the_wound", () -> new SaltTheWound().setCategory(SkillColors.purple));
     public static final RegistryObject<Skill> GANGRENE = SKILLS.register("gangrene", () -> new Hex.Gangrene().setCategory(SkillColors.purple));
     public static final RegistryObject<Skill> IRON_CHOP = SKILLS.register("iron_chop", () -> new IronChop().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> ITCHY_CURSE = SKILLS.register("itchy_curse", () -> new ItchyCurse().setCategory(SkillColors.purple));
@@ -127,10 +129,10 @@ public class WarSkills {
     public static final RegistryObject<Skill> MIKIRI = SKILLS.register("mikiri", () -> new Mikiri().setCategory(SkillColors.azure));
     public static final RegistryObject<Skill> MOMENTUM = SKILLS.register("momentum", () -> new Momentum().setCategory(SkillColors.azure));
     public static final RegistryObject<Skill> MONTANTE = SKILLS.register("montante", () -> new Montante().setCategory(SkillColors.green));
-    ///public static final RegistryObject<Skill> NATURAL_SPRINTER = SKILLS.register("natural_sprinter", () -> new NaturalSprinter().setCategory(SkillColors.red).setChallenge());
+    public static final RegistryObject<Skill> NATURAL_SPRINTER = SKILLS.register("natural_sprinter", () -> new NaturalSprinter().setCategory(SkillColors.red));
     public static final RegistryObject<Skill> NECROSIS = SKILLS.register("necrosis", () -> new Necrosis().setCategory(SkillColors.purple).setChallenge());
 //    public static final RegistryObject<Skill> OVERBEAR = SKILLS.register("overbear", () -> new Overbear().setCategory(SkillColors.red));
-    //public static final RegistryObject<Skill> OVERPOWER = SKILLS.register("overpower", () -> new Overpower().flagConsumer().setCategory(SkillColors.red));
+    public static final RegistryObject<Skill> OVERPOWER = SKILLS.register("overpower", () -> new Overpower().flagConsumer().setCategory(SkillColors.red));
     public static final RegistryObject<Skill> PETRIFY = SKILLS.register("petrify", () -> new Petrify().flagConsumer().setCategory(SkillColors.purple));
     public static final RegistryObject<Skill> PHANTOM_DIVE = SKILLS.register("phantom_dive", () -> new PhantomDive().setCategory(SkillColors.gray).setChallenge());
     public static final RegistryObject<Skill> POUND_OF_FLESH = SKILLS.register("pound_of_flesh", () -> new PoundOfFlesh().setCategory(SkillColors.red));
@@ -154,6 +156,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> STATIC_DISCHARGE = SKILLS.register("static_discharge", () -> new MementoMori.StaticDischarge().flagConsumer().setCategory(SkillColors.cyan).setChallenge());
     //public static final RegistryObject<Skill> SUBMISSION = SKILLS.register("submission", () -> new Submission().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> SUPLEX = SKILLS.register("suplex", () -> new Grapple.Suplex().setCategory(SkillColors.red));
+    public static final RegistryObject<Skill> PICKPOCKET = SKILLS.register("pickpocket", () -> new Pickpocket().setCategory(SkillColors.gold));
     public static final RegistryObject<Skill> TACKLE = SKILLS.register("tackle", () -> new Tackle().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> THROW = SKILLS.register("throw", () -> new Throw().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> TORNADO = SKILLS.register("tornado", () -> new Tornado().setCategory(SkillColors.cyan).setChallenge());
@@ -171,5 +174,7 @@ public class WarSkills {
     //public static final RegistryObject<Skill> WIND_SHOT = SKILLS.register("wind_shot", () -> new WindShot().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> COUNTERSHOT = SKILLS.register("countershot", () -> new Countershot().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> RIPPER = SKILLS.register("ripper", () -> new Ripper().setCategory(SkillColors.cyan));
+    public static final RegistryObject<Skill> SPOILS = SKILLS.register("split_the_spoils", () -> new SplitTheSpoils().setCategory(SkillColors.gold));
+    public static final RegistryObject<Skill> PLUNDER = SKILLS.register("plunder", () -> new HeavyBlow.Plunder().setCategory(SkillColors.gold));
 
 }

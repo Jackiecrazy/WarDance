@@ -1,7 +1,6 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.charging.IChargingSpeed;
@@ -10,9 +9,10 @@ import jackiecrazy.wardance.capability.permission.IPermission;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
-import jackiecrazy.wardance.client.GrappleRenderer;
-import jackiecrazy.wardance.client.PortalRenderer;
 import jackiecrazy.wardance.client.hud.*;
+import jackiecrazy.wardance.client.render.CoinEntityRenderer;
+import jackiecrazy.wardance.client.render.GrappleRenderer;
+import jackiecrazy.wardance.client.render.PortalRenderer;
 import jackiecrazy.wardance.client.screen.ponder.QuiverScreen;
 import jackiecrazy.wardance.client.screen.ponder.StudyTheBladeScreen;
 import jackiecrazy.wardance.command.CategoryArgument;
@@ -26,11 +26,12 @@ import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.entity.skill.JackpotCoin;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;
 import jackiecrazy.wardance.move.actions.WarActionsRegistry;
 import jackiecrazy.wardance.move.conditions.WarConditionsRegistry;
-import jackiecrazy.wardance.networking.*;
+import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.networking.meta.*;
 import jackiecrazy.wardance.networking.movement.*;
@@ -40,7 +41,6 @@ import jackiecrazy.wardance.networking.skill.UpdateMarkPacket;
 import jackiecrazy.wardance.networking.skill.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.networking.sync.*;
 import jackiecrazy.wardance.skill.WarSkills;
-import jackiecrazy.wardance.skill.grapple.Grapple;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -64,6 +64,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -80,6 +81,7 @@ import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Random;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -87,20 +89,15 @@ import java.util.Random;
 public class WarDance {
     public static final String MODID = "wardance";
     public static final Random rand = new Random();
-    public static int lastReport = 0;
-
     public static final Logger LOGGER = LogManager.getLogger();
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-    public static final RegistryObject<CreativeModeTab> WARTAB = TABS.register("scrolls", ()->CreativeModeTab.builder().icon(()->new ItemStack(WarItems.SCROLL.get())).title(Component.translatable("itemGroup.wardance.scrolls")).build());
-    private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, "forge");
-    private static final RegistryObject<SingletonArgumentInfo<SkillArgument>> WARDANCE_COMMAND_SKI_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("war_skills", () ->
-            ArgumentTypeInfos.registerByClass(SkillArgument.class,
-                    SingletonArgumentInfo.contextFree(SkillArgument::skill)));
-    private static final RegistryObject<SingletonArgumentInfo<CategoryArgument>> WARDANCE_COMMAND_CAT_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("war_categories", () ->
-            ArgumentTypeInfos.registerByClass(CategoryArgument.class,
-                    SingletonArgumentInfo.contextFree(CategoryArgument::color)));
-    public static final TagKey<DamageType> NO_DARKTIDE_DMG = TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation("wardance", "no_darktide"));
+    public static final RegistryObject<CreativeModeTab> WARTAB = TABS.register("scrolls", () -> CreativeModeTab.builder().icon(() -> new ItemStack(WarItems.SCROLL.get())).title(Component.translatable("itemGroup.wardance.scrolls")).build());
+    public static final TagKey<DamageType> NO_DARKTIDE_DMG = TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation("wardance", "no_composure"));
     public static final TagKey<DamageType> NO_SPIRIT_COST = TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation("wardance", "no_spirit_cost"));
+    private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, "forge");
+    private static final RegistryObject<SingletonArgumentInfo<SkillArgument>> WARDANCE_COMMAND_SKI_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("war_skills", () -> ArgumentTypeInfos.registerByClass(SkillArgument.class, SingletonArgumentInfo.contextFree(SkillArgument::skill)));
+    private static final RegistryObject<SingletonArgumentInfo<CategoryArgument>> WARDANCE_COMMAND_CAT_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("war_categories", () -> ArgumentTypeInfos.registerByClass(CategoryArgument.class, SingletonArgumentInfo.contextFree(CategoryArgument::color)));
+    public static int lastReport = 0;
 
     public WarDance() {
 
@@ -116,6 +113,7 @@ public class WarDance {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gui);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::register);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::attribute);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onEntityAttributeCreation);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -204,6 +202,9 @@ public class WarDance {
         EntityRenderers.register(WarEntities.TIMBER.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.ASURA.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.BABYLON.get(), PortalRenderer::new);
+        EntityRenderers.register(WarEntities.EXCALIBUR.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.ECHO.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.COIN.get(), CoinEntityRenderer::new);
         event.enqueueWork(() -> {
             MenuScreens.register(WarContainers.QUIVER_MENU.get(), QuiverScreen::new);
             MenuScreens.register(WarContainers.WEEB_MENU.get(), StudyTheBladeScreen::new);
@@ -211,10 +212,18 @@ public class WarDance {
     }
 
     private void attribute(EntityAttributeModificationEvent e) {
+        List<RegistryObject<Attribute>> forEveryone = List.of(WarAttributes.MAX_POSTURE, WarAttributes.COMPOSURE, WarAttributes.KNOCK_TIME);
         for (EntityType<? extends LivingEntity> type : e.getTypes()) {
             for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries())
                 e.add(type, a.get());
         }
+        for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries())
+            if (!forEveryone.contains(a))
+                e.add(EntityType.PLAYER, a.get());
+    }
+
+    private void onEntityAttributeCreation(EntityAttributeCreationEvent event) {
+        //event.put(WarEntities.COIN.get(), JackpotCoin.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -258,11 +267,8 @@ public class WarDance {
     private void processIMC(final InterModProcessEvent event) {
         // some example code to receive and process InterModComms from other mods
         WarCompat.checkCompatStatus();
-        if (WarCompat.elenaiDodge)
-            MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
-            ForgeRegistries.ENTITY_TYPES.getEntries().stream()
-                    .filter(ent -> ent.getValue().getCategory()!= MobCategory.MISC)
-                    .forEach(a->System.out.println(a.getKey().location()));
+        if (WarCompat.elenaiDodge) MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
+        ForgeRegistries.ENTITY_TYPES.getEntries().stream().filter(ent -> ent.getValue().getCategory() != MobCategory.MISC).forEach(a -> System.out.println(a.getKey().location()));
 
     }
 

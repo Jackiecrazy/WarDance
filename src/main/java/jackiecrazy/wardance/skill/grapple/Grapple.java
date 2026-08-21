@@ -80,7 +80,7 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
-        if (!cast(caster, target, -999)) return;
+        if (!cast(caster, target)) return;
         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), ICombatCapability.BreachLevel.STUN);
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
@@ -93,7 +93,7 @@ public class Grapple extends Skill {
     public static class Suplex extends Grapple {
 
         protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
-            if (!cast(caster, target, -999)) return;
+            if (!cast(caster, target)) return;
             caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             final ICombatCapability casterCap = CombatData.getCap(caster);
             float posture = casterCap.getPosture();

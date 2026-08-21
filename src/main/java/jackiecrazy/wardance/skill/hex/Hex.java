@@ -2,16 +2,20 @@ package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.LuckEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -56,7 +60,7 @@ public class Hex extends Skill {
     public static void echoes(LivingHurtEvent e) {
         LivingEntity target = e.getEntity();
         Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
-            if (a.getArbitraryFloat() < 0 && DamageUtils.isMeleeAttack(e.getSource())) {
+            if (a.getArbitraryFloat() <= 0 && DamageUtils.isMeleeAttack(e.getSource())) {
                 target.invulnerableTime = 0;
                 final LivingEntity caster = a.getCaster(target.level());
                 if (caster != null)
@@ -123,6 +127,11 @@ public class Hex extends Skill {
         return thing;
     }
 
+    @Override
+    public boolean isPassive(LivingEntity caster) {
+        return this==WarSkills.CURSE_OF_MISFORTUNE.get()||super.isPassive(caster);
+    }
+
     @Nonnull
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
@@ -131,6 +140,14 @@ public class Hex extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if(this==WarSkills.CURSE_OF_MISFORTUNE.get()&&stats.getState()==STATE.INACTIVE){
+            if (CombatData.getCap(caster).isDodging() || CombatData.getCap(caster).isIframe()) {
+                Entity collide = MobilityUtils.collidingEntity(caster);
+                if (collide instanceof LivingEntity le&&cast(caster)) {
+                    mark(caster, le, duration());
+                }
+            }
+        }
         if (cooldownTick(stats)) {
             return true;
         }
@@ -153,7 +170,7 @@ public class Hex extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = SkillUtils.aimLiving(caster);
-        if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
+        if (to == STATE.ACTIVE && target != null && cast(caster, target)) {
             mark(caster, target, duration(), prev.getArbitraryFloat());
             prev.setArbitraryFloat(0);
             if (caster.level() instanceof ServerLevel sl) {
@@ -211,6 +228,18 @@ public class Hex extends Skill {
     }
 
     public static class CurseOfEchoes extends Hex {
+        @Override
+        public HashSet<String> getTags() {
+            return passive;
+        }
+
+        @Override
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if(procPoint instanceof MeleePostureEvent.Parry bl&&stats.getState()==STATE.INACTIVE && bl.getAttacker()!=null && bl.success()&&cast(caster)) {
+                mark(caster, target, duration());
+            }
+        }
+
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             sd.addArbitraryFloat(-0.05f);

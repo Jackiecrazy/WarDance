@@ -44,6 +44,7 @@ import net.minecraft.world.entity.Marker;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -258,6 +259,11 @@ public class CombatHandler {
             if (projectile instanceof Projectile) {
                 double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
                 projectile.shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
+                if(projectile instanceof AbstractHurtingProjectile ahp){
+                    ahp.xPower=pe.getReturnVec().x;
+                    ahp.yPower=pe.getReturnVec().y;
+                    ahp.zPower=pe.getReturnVec().z;
+                }
             }
         } else projectile.remove(Entity.RemovalReason.KILLED);
         MobilityUtils.knockBack(uke, projectile, 0.01f, true, false);
@@ -703,7 +709,7 @@ public class CombatHandler {
             }
 
             //consume stamina if we didn't do it yet, somehow
-            if (!semeCap.alreadyProc("oncePerAttack") && !source.is(WarDance.NO_SPIRIT_COST)) {
+            if (!semeCap.alreadyProc("oncePerAttack") && !source.is(WarDance.NO_SPIRIT_COST) && !source.is(FootworkDamageTypeTags.SKILL)) {
                 final float exhausted = semeCap.doConsumeSpirit((float) (e.getAmount() * sweepInfo.spirit_multiplier()));
                 cap.recordDamage(exhausted);
                 e.setAmount(e.getAmount() - exhausted);

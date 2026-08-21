@@ -277,7 +277,7 @@ public class WeaponInteractions {
             if (element.isJsonObject()) {
                 JsonObject obj = element.getAsJsonObject();
                 if (obj.has("inherit_from") && obj.get("inherit_from").isJsonPrimitive()) {
-                    String toInherit = obj.remove("inherit_from").getAsString();
+                    String toInherit = obj.get("inherit_from").getAsString();
                     findParent:
                     for (JsonElement v : map.values()) {
                         final String searchTarget = toInherit.substring(0, toInherit.indexOf("-"));
@@ -286,7 +286,7 @@ public class WeaponInteractions {
                             final String[] targets = toInherit.split("-");
                             for (int i = 1; i < targets.length; i++) {
                                 if (theSection.isJsonArray())
-                                    theSection = theSection.getAsJsonArray().get(Integer.parseInt(targets[i]));
+                                    theSection = theSection.getAsJsonArray().get(Integer.parseInt(targets[i])-1);
                                 else if (theSection.isJsonObject())
                                     theSection = theSection.getAsJsonObject().get(targets[i]);
                                 else {
@@ -325,11 +325,11 @@ public class WeaponInteractions {
             if (json.isJsonObject()) {
                 //could be either a full fledged def or just a single interaction, possibly containing overrides
                 //extract partial overrides first
-                final JsonObject baseObj = preProcessInherit(JsonUtils.parseSyntacticSugar(json)).getAsJsonObject();
+                final JsonObject baseObj = JsonUtils.parseSyntacticSugar(preProcessInherit(json)).getAsJsonObject();
                 JsonElement overObj = baseObj.remove("overrides");
                 InteractionGroup ret = NAIVE.fromJson(baseObj, InteractionGroup.class);
                 if ((baseObj.has("type") || baseObj.has("sweep")) && ret.getInteractions().isEmpty()) {
-                    ret.setInteractions(List.of(GSON.fromJson(json, WeaponInteraction.class)));
+                    ret.setInteractions(List.of(GSON.fromJson(baseObj, WeaponInteraction.class)));
                 }
 
                 if (overObj != null && overObj.isJsonArray()) {

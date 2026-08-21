@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.skill.projectile;
 
+import jackiecrazy.footwork.Footwork;
 import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
@@ -34,6 +36,7 @@ public class Ripper extends Skill {
                     int rip = (int) Math.min(sd.getDuration(), 2);
                     sd.decrementDuration(2);
                     lhe.setAmount(lhe.getAmount() + rip * 2);
+                    EffectUtils.stackPot(target, new MobEffectInstance(FootworkEffects.WOUND.get(), 200, rip), EffectUtils.StackingMethod.MAX_DURATION);
                 }
             }
         }

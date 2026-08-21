@@ -100,54 +100,7 @@
       ]
     },
     "standing": {
-      "type": "animation",
-      "duration": 7,
-      "easing": "IN_OUT_SINE",
-      "frames": [
-        {
-          "direction": [
-            0, 0, 1
-          ],
-          "offset": [
-            0, 0, 0
-          ],
-          "effects": {
-            "attack_info": {
-              "damage_scale": 1,
-              "hit_self": {
-                "run_actions": [
-                  {
-                    "ID": "wardance:play_interaction",
-                    "move_state": "STANDING"
-                  }
-                ]
-              }
-            },
-            "effects": [
-              "WEAPON", "TRAIL"
-            ]
-          }
-        }, {
-          "direction": [
-            0, 0, 1
-          ],
-          "offset": [
-            0, 0, 1
-          ]
-        }, {
-          "direction": [
-            0, 0, 1
-          ],
-          "offset": [
-            0, 0, 1
-          ]
-        }
-      ],
-      "velocity": [
-        0, 0.1, 0
-      ],
-      "set_velocity": true,
-      "dodge_frames": 5
+      "inherit_from": "#scythe-standing"
     },
     "aerial": {
       "type": "animation",

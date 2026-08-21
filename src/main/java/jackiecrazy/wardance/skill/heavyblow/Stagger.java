@@ -1,9 +1,12 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -30,7 +33,8 @@ public class Stagger extends HeavyBlow {
     @Override
     protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
         stats.setArbitraryFloat(proc.getDamageModifier());
-        proc.setDamageModifier(stats.getEffectiveness());
+        proc.setDamageModifier(1);
+        EffectUtils.stackPot(target, new MobEffectInstance(FootworkEffects.WOUND.get(), 200, Math.round(7*stats.getEffectiveness())), EffectUtils.StackingMethod.MAX_DURATION);
         stats.flagCondition(true);
     }
 

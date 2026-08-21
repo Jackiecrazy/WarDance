@@ -257,7 +257,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         return WeaponStats.isWeapon(null, stack);
     }
 
-    private int getPreferredColor(ItemStack stack) {
+    public static int getPreferredColor(ItemStack stack) {
         // Return quiver index 0-7 or -1
         if (stack.hasTag()) {
             if (stack.getOrCreateTag().contains("quiverColorIndex"))
@@ -266,7 +266,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         return -1;
     }
 
-    private int getPreferredSlot(ItemStack stack) {
+    public static int getPreferredSlot(ItemStack stack) {
         // Return quiver index 0-7 or -1
         if (stack.hasTag()) {
             if (stack.getOrCreateTag().contains("quiverSlotIndex"))

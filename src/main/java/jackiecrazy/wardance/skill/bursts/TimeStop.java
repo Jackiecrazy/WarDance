@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.event.GainAdrenalineEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -97,6 +98,9 @@ public class TimeStop extends Skill {
                 e.setDuration(e.getDuration() - 100);
             } else if (procPoint instanceof PlayInteractionEvent.Post e)
                 e.setCooldown(e.getOriginalState() == WeaponStats.AttackType.THROW ? 1 : 0.5);
+            if (procPoint instanceof GainAdrenalineEvent gme) {
+                gme.setQuantity(0);
+            }
         }
     }
 

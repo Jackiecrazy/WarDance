@@ -2,6 +2,8 @@ package jackiecrazy.wardance.skill.regenspirit;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.GainSpiritEvent;
+import jackiecrazy.wardance.capability.resources.NewCombatCapability;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.ReworkConstants;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -69,10 +71,11 @@ confidence: your spirit regeneration speed scales proportionally with how much s
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if(procPoint instanceof GainSpiritEvent gse){
+            gse.setQuantity(gse.getQuantity()*0.6f);
+        }
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (CombatData.getCap(caster).getSpirit() < CombatData.getCap(caster).getMaxSpirit() - 3 && caster.isSprinting())
-                completeChallenge(caster);
-            CombatData.getCap(caster).addSpirit(3* ReworkConstants.SPIRIT_QI);
+            CombatData.getCap(caster).setSpirit(NewCombatCapability.MAX_SPIRIT);
 
         }
     }

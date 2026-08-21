@@ -83,7 +83,7 @@ public class Taunt extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = SkillUtils.aimLiving(caster, 8);
-        if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
+        if (to == STATE.ACTIVE && target != null && cast(caster, target)) {
             mark(caster, target, duration(), prev.getEffectiveness());
             if (caster.level() instanceof ServerLevel sl) {
                 caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.VINDICATOR_CELEBRATE, SoundSource.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);

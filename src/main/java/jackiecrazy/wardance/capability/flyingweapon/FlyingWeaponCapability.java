@@ -239,7 +239,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                 }
                 //if weapons are idle
                 if (fwe.isIdle()) {
-
+                    fwe.unlock();//todo does this break anything
                     //and the flag is set, they are replaced and the flag is reset
                     if (isMain ? mainSwap : offSwap) {
                         updateWeapon(fwe, hand);

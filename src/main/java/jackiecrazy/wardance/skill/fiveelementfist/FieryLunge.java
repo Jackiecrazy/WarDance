@@ -14,11 +14,11 @@ public class FieryLunge extends FiveElementFist {
     private static final List<MotionFrame> SWEEP = List.of(
             new MotionFrame(new Vec3(0.0F, 0.0F, 1.0F),
                             new Vec3(0.0F, 0.0F, 0.2F),
-                            new Vector4d(1.0, 0.4, 0, 0))
+                            new Vector4d(-1.0, 0.4, 0, 0))
                     .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON).setHit(new HitInfo(0, 1, 1, false, false, 1))),
             new MotionFrame(new Vec3(0.0F, 0.0F, 1.0),
                             new Vec3(0.0F, 0.0F, 1.0F),
-                            new Vector4d(1.0, 0.4, -0.2, 0)));
+                            new Vector4d(-1.0, 0.4, -0.2, 0)));
     private static final MotionManager FIRE = new MotionManagers.DefinitionMM(new MotionGroup(SWEEP, EasingFunctionEnum.IN_SINE, 5));
     public static final WeaponInteractions.InteractionGroup FIRE_LUNGE = new Animation().setAction(FIRE).asGroup().withSwingEffect(new HitEffects().setDodge_frames(10).setVelocity(new Vec3(0, 0, 0.5)));
 

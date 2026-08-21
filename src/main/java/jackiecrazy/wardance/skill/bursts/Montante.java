@@ -53,13 +53,13 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
      */
     @Override
     public HashSet<String> getTags() {
-        return state;
+        return burst;
     }
 
     @Nonnull
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return state;
+        return burst;
     }
 
     @Override

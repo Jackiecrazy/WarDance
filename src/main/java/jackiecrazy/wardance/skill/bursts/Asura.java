@@ -79,19 +79,14 @@ public class Asura extends Skill {
     private final HashSet<String> tag = makeTag(SkillTags.offensive, SkillTags.physical);
 
     @Override
-    public float mightCost(LivingEntity caster) {
-        return 1;
-    }
-
-    @Override
     public HashSet<String> getTags() {
-        return tag;
+        return burst;
     }
 
     @Nonnull
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return offensive;
+        return burst;
     }
 
     @Override
@@ -105,8 +100,6 @@ public class Asura extends Skill {
             CombatData.getCap(caster).setSpirit(100);
             if (caster.getMainHandItem().is(WeaponStats.TWO_HANDED) && caster.getOffhandItem().is(WeaponStats.TWO_HANDED))
                 completeChallenge(caster);
-//            if(FlyingWeaponData.getCap(caster).hasGrapple())
-//                FlyingWeaponData.getCap(caster).getGrapple().setHookStrength(10);
         }
         return false;
     }

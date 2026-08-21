@@ -23,15 +23,15 @@ import net.minecraft.world.level.Level;
 import java.awt.*;
 import java.util.List;
 
-public class BabylonWeaponEntity extends FlyingWeaponEntity {
+public class BabylonPortal extends FlyingWeaponEntity {
     public static final HitInfo BABY = new HitInfo(0, 0.7, 1, false, true, 1).setSpirit_multiplier((double) 0.0F);
     public int size = 0;
     private List<ItemStack> conjureList = List.of(new ItemStack(Items.GOLDEN_SWORD));
     private Entity target;
     private int toggleTime = -1;
 
-    public BabylonWeaponEntity(EntityType<? extends FlyingItemEntity> type,
-                               Level level) {
+    public BabylonPortal(EntityType<? extends FlyingItemEntity> type,
+                         Level level) {
         super(type, level);
         setState(STATE.FOLLOW);
         setEffect();

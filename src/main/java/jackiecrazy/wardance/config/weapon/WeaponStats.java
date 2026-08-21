@@ -3,12 +3,10 @@ package jackiecrazy.wardance.config.weapon;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
-import jackiecrazy.footwork.utils.JsonUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -39,12 +37,10 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector4d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.json.JsonString;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,8 +55,11 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> CANNOT_BLOCK = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
     public static final TagKey<Item> DEMON_HUNTER_CHARGE_RANGED = ItemTags.create(new ResourceLocation(WarDance.MODID, "demon_hunter_ranged"));
     public static final TagKey<Item> DESPERATE_THROW = ItemTags.create(new ResourceLocation(WarDance.MODID, "desperate_throw"));
+    public static final TagKey<Item> GUARDIAN_WEAPONS = ItemTags.create(new ResourceLocation(WarDance.MODID, "guardian_weapon"));
     private static final ResourceLocation air = new ResourceLocation("air");
+    private static final List<TagKey<Item>> matching = new ArrayList<>();
     public static List<Item> DESPERATION = new ArrayList<>();
+    public static List<Item> GUARDIANS = new ArrayList<>();
     public static WeaponInfo DEFAULTMELEE = new WeaponInfo(1, 1);
     public static HashMap<Item, WeaponInfo> combatList = new HashMap<>();
     public static HashMap<Item, WeaponInfo> clientItems = new HashMap<>();
@@ -85,6 +84,11 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncTagDataPacket(archetypes));
     }
 
+    public static Item getGuardianForPlayer(LivingEntity p) {
+        if (GUARDIANS.isEmpty()) return Items.COD;
+        return GUARDIANS.get((int) (p.getUUID().getMostSignificantBits()%GUARDIANS.size()));
+    }
+
     public static void clientWeaponOverride(Map<Item, WeaponInfo> server) {
         clientItems.putAll(server);//the client doesn't need *that* much info, so we keep its list separate and save packets
     }
@@ -99,6 +103,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         DEFAULTMELEE = new WeaponInfo();
         combatList = new HashMap<>();
         archetypes = new HashMap<>();
+        WeaponInteractions.GroupDeserializer.map = wholeMap;
 
         wholeMap.forEach((key, value) -> {
             JsonObject file = value.getAsJsonObject();
@@ -162,8 +167,6 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return put;
     }
 
-    private static final List<TagKey<Item>> matching=new ArrayList<>();
-
     @Nullable
     public static WeaponInfo lookupStats(ItemStack is) {
         if (is == null) return null;
@@ -185,13 +188,12 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 matching.add(tag);
             }
         }
-        if(matching.size()==1) {
-            TagKey<Item> tag=matching.get(0);
+        if (matching.size() == 1) {
+            TagKey<Item> tag = matching.get(0);
             //faster cache lookup in the future
             combatList.put(is.getItem(), archetypes.get(tag));
             return archetypes.get(tag);
-        }
-        else if(!matching.isEmpty()) {
+        } else if (!matching.isEmpty()) {
             matching.sort((a, b) -> {
                 if (a == b) return 0;
                 final String aname = a.location().getNamespace();
@@ -202,7 +204,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 if (bname.contains("better_combat")) return -2;
                 return 0;
             });
-            TagKey<Item> tag=matching.get(0);
+            TagKey<Item> tag = matching.get(0);
             //faster cache lookup in the future
             combatList.put(is.getItem(), archetypes.get(tag));
             return archetypes.get(tag);
@@ -216,13 +218,12 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 return clientArchetypes.get(tag);
             }
         }
-        if(matching.size()==1) {
-            TagKey<Item> tag=matching.get(0);
+        if (matching.size() == 1) {
+            TagKey<Item> tag = matching.get(0);
             //faster cache lookup in the future
             clientItems.put(is.getItem(), clientArchetypes.get(tag));
             return clientArchetypes.get(tag);
-        }
-        else if(!matching.isEmpty()) {
+        } else if (!matching.isEmpty()) {
             matching.sort((a, b) -> {
                 if (a == b) return 0;
                 final String aname = a.location().getNamespace();
@@ -233,7 +234,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 if (bname.contains("better_combat")) return -2;
                 return 0;
             });
-            TagKey<Item> tag=matching.get(0);
+            TagKey<Item> tag = matching.get(0);
             //faster cache lookup in the future
             clientItems.put(is.getItem(), clientArchetypes.get(tag));
             return clientArchetypes.get(tag);
@@ -324,7 +325,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             final WeaponInteractions.InteractionGroup intl = info.sweeps[s.ordinal()];
             if (ignoreOverrides) return intl;
             if (!intl.getOverrides().isEmpty()) {
-                ArgumentContext ctx = new ArgumentContext(wielder, wielder);
+                ArgumentContext ctx = new ArgumentContext(wielder, wielder).addContext("hand", h).addContext("itemstack", i).addContext("offhand", h == InteractionHand.OFF_HAND);
                 for (WeaponInteractions.InteractionOverride io : intl.getOverrides()) {
                     if (h != null && CombatUtils.getCooledAttackStrength(wielder, h, 0.5f) > io.override().getMinimumCooldown() && Boolean.TRUE.equals(io.condition().resolve(ctx))) {
                         return io.override();

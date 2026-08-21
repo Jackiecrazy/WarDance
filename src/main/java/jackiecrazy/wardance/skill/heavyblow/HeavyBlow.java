@@ -1,10 +1,15 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -65,6 +70,38 @@ public class HeavyBlow extends Skill {
 //            if (extra.lengthSqr() > 1) extra = extra.normalize();
 //            caster.setDeltaMovement(caster.getDeltaMovement().add(extra));
 //            caster.hurtMarked = true;
+        }
+    }
+
+    public static class Plunder extends HeavyBlow {
+
+        @Override
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if(procPoint instanceof LootingLevelEvent le&&state==STATE.ACTIVE)
+                le.setLootingLevel(le.getLootingLevel()+3);
+        }
+
+        @Override
+        protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
+            MobEffectInstance inst=null;
+            for (MobEffectInstance mei : target.getActiveEffects().stream().toList()) {
+                if (mei.getEffect().getCategory() == MobEffectCategory.BENEFICIAL){
+                    inst=mei;
+                    break;
+                }
+            }
+            if(inst!=null){
+                target.removeEffect(inst.getEffect());
+                MobEffectInstance toApply=new MobEffectInstance(inst.getEffect(), (int) (Mth.clamp(inst.getDuration(), 0, 200)*stats.getEffectiveness()));
+                EffectUtils.stackPot(caster, toApply, EffectUtils.StackingMethod.MAX_DURATION);
+            }
+        }
+        @Override
+        public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+            if (to == STATE.COOLING) {
+                setCooldown(caster, prev, 5);
+            }
+            return passive(prev, from, to);
         }
     }
 }

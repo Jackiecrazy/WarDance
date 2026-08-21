@@ -46,7 +46,6 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -58,11 +57,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
@@ -113,6 +109,9 @@ public class EntityHandler {
         fasterUse.clear();
         WeaponStats.DESPERATION = BuiltInRegistries.ITEM.stream()
                 .filter(item -> item.builtInRegistryHolder().is(WeaponStats.DESPERATE_THROW))
+                .toList();
+        WeaponStats.GUARDIANS = BuiltInRegistries.ITEM.stream()
+                .filter(item -> item.builtInRegistryHolder().is(WeaponStats.GUARDIAN_WEAPONS))
                 .toList();
     }
 

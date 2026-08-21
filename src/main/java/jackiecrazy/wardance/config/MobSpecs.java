@@ -27,7 +27,7 @@ public class MobSpecs extends SimpleJsonResourceReloadListener {
     public static final TagKey<EntityType<?>> DESTROY_ON_PARRY = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "destroy_on_parry"));
     public static final TagKey<EntityType<?>> TRIGGER_ON_PARRY = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "trigger_on_parry"));
     public static final TagKey<EntityType<?>> IGNORED_BY_SWEEP = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "ignored_by_sweep"));
-    public static final TagKey<EntityType<?>> NO_DARKTIDE = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "no_darktide"));
+    public static final TagKey<EntityType<?>> NO_DARKTIDE = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "no_composure"));
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
     private static HashMap<EntityType<?>, MobInfo> mobMap = new HashMap<>();
     private static HashMap<TagKey<EntityType<?>>, MobInfo> mobTagMap = new HashMap<>();

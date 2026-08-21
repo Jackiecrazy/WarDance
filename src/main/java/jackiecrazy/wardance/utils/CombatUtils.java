@@ -21,7 +21,6 @@ import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import jackiecrazy.wardance.capability.permission.PermissionData;
-import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
@@ -54,7 +53,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -546,7 +544,7 @@ public class CombatUtils {
                 reach = radius;
             }
             time = Math.max(animTime, time / 2);
-            customAnim = SweepAnimationBuilder.temp_getMMFromType(animTime, type, radius, null, reach);
+            customAnim = SweepAnimationBuilder.managerFromBasic(animTime, type, radius, null, reach);
         }
         FlyingWeaponData.getCap(e).scheduleAction(h, customAnim, true);
 
@@ -677,10 +675,12 @@ public class CombatUtils {
         if (entity.isSprinting())
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && !entity.onClimbable() && !entity.isInWater()) {
-            final double epsilon = 0.005;
-            if (AerialModeData.getCap(entity).isAerialMode() || entity.getDeltaMovement().y > epsilon)
+            final double epsilon = 0.02;
+            Vec3 tanuki = CombatData.getCap(entity).getMotionConsistently();
+            if(tanuki==null)tanuki=entity.getDeltaMovement();
+            if (AerialModeData.getCap(entity).isAerialMode() || tanuki.y > epsilon)
                 set = WeaponStats.AttackType.AERIAL;
-            if (entity.fallDistance > 0 || entity.getDeltaMovement().y <= epsilon)
+            if (entity.fallDistance > 0 || tanuki.y <= epsilon)
                 set = WeaponStats.AttackType.FALLING;
         }
         if (entity.isSwimming() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
