@@ -8,6 +8,7 @@ import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -65,6 +66,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         float health = 1 - (GeneralUtils.getActualHealth(caster) / caster.getMaxHealth());
         final float amount = health * SkillUtils.getSkillEffectiveness(caster);
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        SkillUtils.modifyAttribute(caster, WarAttributes.ADRE_BON.get(), MULT, amount*2, AttributeModifier.Operation.MULTIPLY_TOTAL);
         float afore = d.getArbitraryFloat();
         d.setArbitraryFloat(amount);
         return afore != d.getArbitraryFloat();
@@ -74,6 +76,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
         caster.getAttribute(Attributes.ARMOR).removeModifier(MULT);
+        caster.getAttribute(WarAttributes.ADRE_BON.get()).removeModifier(MULT);
     }
 
     @Override

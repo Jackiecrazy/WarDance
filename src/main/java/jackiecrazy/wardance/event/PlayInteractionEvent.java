@@ -12,13 +12,13 @@ import net.minecraftforge.eventbus.api.Cancelable;
 public class PlayInteractionEvent extends LivingEvent {
     protected final InteractionHand hand;
     protected final ItemStack stack;
-    protected WeaponStats.AttackType state;
+    protected WeaponStats.AttackState state;
     protected WeaponInteractions.InteractionGroup interact=null;
 
     public PlayInteractionEvent(LivingEntity entity,
                                 InteractionHand hand,
                                 ItemStack stack,
-                                WeaponStats.AttackType state) {
+                                WeaponStats.AttackState state) {
         super(entity);
         this.hand = hand;
         this.stack = stack;
@@ -33,27 +33,27 @@ public class PlayInteractionEvent extends LivingEvent {
         return stack;
     }
 
-    public WeaponStats.AttackType getOriginalState() {
+    public WeaponStats.AttackState getOriginalState() {
         return state;
     }
 
     @Cancelable
     public static class Pre extends PlayInteractionEvent {
-        protected WeaponStats.AttackType state;
+        protected WeaponStats.AttackState state;
 
         public Pre(LivingEntity entity,
                    InteractionHand hand,
                    ItemStack stack,
-                   WeaponStats.AttackType state) {
+                   WeaponStats.AttackState state) {
             super(entity, hand, stack, state);
             this.state=state;
         }
 
-        public WeaponStats.AttackType getMoveState() {
+        public WeaponStats.AttackState getMoveState() {
             return state;
         }
 
-        public Pre setMoveState(WeaponStats.AttackType state) {
+        public Pre setMoveState(WeaponStats.AttackState state) {
             this.state = state;
             return this;
         }
@@ -74,7 +74,7 @@ public class PlayInteractionEvent extends LivingEvent {
         public Interaction(LivingEntity entity,
                            InteractionHand hand,
                            ItemStack stack,
-                           WeaponStats.AttackType state,
+                           WeaponStats.AttackState state,
                            WeaponInteractions.InteractionGroup interact) {
             super(entity, hand, stack, state);
             this.orig = this.interact = interact;
@@ -109,7 +109,7 @@ public class PlayInteractionEvent extends LivingEvent {
         public Post(LivingEntity entity,
                            InteractionHand hand,
                            ItemStack stack,
-                           WeaponStats.AttackType state,
+                           WeaponStats.AttackState state,
                            WeaponInteractions.InteractionGroup interact) {
             super(entity, hand, stack, state);
             cooldown=interact.getCooldownRefund();

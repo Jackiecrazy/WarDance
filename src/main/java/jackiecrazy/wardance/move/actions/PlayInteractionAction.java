@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeMod;
 
 public class PlayInteractionAction extends Action {
-    private WeaponStats.AttackType move_state;
+    private WeaponStats.AttackState move_state;
     private Argument<ItemStack> stack;
     private InteractionHand hand;
     private WeaponInteractions.InteractionGroup interaction;

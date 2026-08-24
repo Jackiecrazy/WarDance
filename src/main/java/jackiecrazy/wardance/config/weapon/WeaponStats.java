@@ -148,7 +148,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         put.id = root;
         WeaponInteractions.InteractionGroup defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.InteractionGroup.class);
         put.sweeps[0] = defaultSweep;
-        for (AttackType s : AttackType.values()) {
+        for (AttackState s : AttackState.values()) {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name().toLowerCase(Locale.ROOT));
             if (gottem != null) {
@@ -313,11 +313,11 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return is.is(PIERCE_SHIELD);
     }
 
-    public static WeaponInteractions.InteractionGroup getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s,
+    public static WeaponInteractions.InteractionGroup getSweepInfo(ItemStack i, LivingEntity wielder, AttackState s,
                                                                    boolean ignoreOverrides, InteractionHand h) {
         final WeaponInfo info = lookupStats(i);
         if (info == null) {
-            if (Objects.requireNonNull(s) == AttackType.THROW) {
+            if (Objects.requireNonNull(s) == AttackState.THROW) {
                 return Throw.DEFAULT;
             }
             return SweepAttack.DEFAULT_NONE;
@@ -336,7 +336,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         }
     }
 
-    public static HitInfo getHitInfo(ItemStack i, LivingEntity wielder, AttackType s) {
+    public static HitInfo getHitInfo(ItemStack i, LivingEntity wielder, AttackState s) {
         if (info_override != null) return info_override;
 //        final WeaponInfo info = lookupStats(i);
 //        if (info == null) return SweepAttack.DEFAULT_NONE.getHitInfo();
@@ -353,7 +353,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         updateItems(object, rm, profiler);
     }
 
-    public enum AttackType {
+    public enum AttackState {
         UNDEFINED,//becomes internal damage
 
         //normal actions//
@@ -379,7 +379,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         private MotionManager aim_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), 2);
         private MotionManager swap_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.AFTERIMAGE)), 2);
         //standing, falling, sneaking, sprinting, riding
-        private WeaponInteractions.InteractionGroup[] sweeps = new WeaponInteractions.InteractionGroup[AttackType.values().length];
+        private WeaponInteractions.InteractionGroup[] sweeps = new WeaponInteractions.InteractionGroup[AttackState.values().length];
 
         private WeaponInfo() {
             this(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
@@ -391,9 +391,9 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             for (int i = 0; i < sweeps.length; i++) {
                 sweeps[i] = SweepAttack.DEFAULT_FAN.clone().asGroup();
             }
-            sweeps[AttackType.GUARD_COUNTER.ordinal()] = Animation.FLURRY;
-            sweeps[AttackType.THROW.ordinal()] = Throw.DEFAULT;
-            sweeps[AttackType.PICKUP_FLOURISH.ordinal()] = Animation.CIRCLE;
+            sweeps[AttackState.GUARD_COUNTER.ordinal()] = Animation.FLURRY;
+            sweeps[AttackState.THROW.ordinal()] = Throw.DEFAULT;
+            sweeps[AttackState.PICKUP_FLOURISH.ordinal()] = Animation.CIRCLE;
         }
 
         public static WeaponInfo read(FriendlyByteBuf f) {
@@ -461,7 +461,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             return id;
         }
 
-        public List<String> getTags(AttackType t) {
+        public List<String> getTags(AttackState t) {
             return sweeps[t.ordinal()].tags();
         }
     }

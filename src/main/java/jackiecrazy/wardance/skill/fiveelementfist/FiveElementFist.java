@@ -1,25 +1,17 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
-import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.event.DamageKnockbackEvent;
-import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +75,7 @@ public abstract class FiveElementFist extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof PlayInteractionEvent.Interaction e && procPoint.getPhase() == EventPriority.HIGHEST && WeaponStats.isUnarmed(e.getStack(), caster)) {
+        if (procPoint instanceof PlayInteractionEvent.Interaction e && procPoint.getPhase() == EventPriority.HIGHEST && e.getOriginalState()==toReplace() && WeaponStats.isUnarmed(e.getStack(), caster)) {
             onStateChange(caster, stats, STATE.INACTIVE, STATE.ACTIVE);
             e.setInteraction(getSweep());
             AerialModeData.getCap(caster).setAerialMode(30);
@@ -91,6 +83,7 @@ public abstract class FiveElementFist extends Skill {
     }
 
     abstract WeaponInteractions.InteractionGroup getSweep();
+    abstract WeaponStats.AttackState toReplace();
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {

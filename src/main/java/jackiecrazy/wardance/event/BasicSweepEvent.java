@@ -23,7 +23,7 @@ public class BasicSweepEvent extends LivingEvent {
     private double a, b, level;
     private Color color = Color.WHITE;
     private SweepAttack.SWEEPTYPE t;
-    private WeaponStats.AttackType state;
+    private WeaponStats.AttackState state;
     public BasicSweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, SweepAttack.SWEEPTYPE type, double base, double scale) {
         super(entity);
         oangle = a = base;
@@ -91,7 +91,7 @@ public class BasicSweepEvent extends LivingEvent {
         this.t = t;
     }
 
-    public WeaponStats.AttackType getState() {
+    public WeaponStats.AttackState getState() {
         return state;
     }
 

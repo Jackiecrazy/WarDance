@@ -92,7 +92,7 @@ public class PestilentEdge extends SkillStyle {
                        SkillData stats,
                        @Nullable LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent hurt && hurt.getEntity() == target) {
-            if (!CombatData.getCap(caster).alreadyProc("oncePerAttack") && CombatUtils.getAttackState(caster) == WeaponStats.AttackType.DRAW_ATTACK) {
+            if (!CombatData.getCap(caster).alreadyProc("oncePerAttack") && CombatUtils.getAttackState(caster) == WeaponStats.AttackState.DRAW_ATTACK) {
                 for (LivingEntity le : stats.getTargets())
                     removeMark(le);
                 stats.clearTargets();

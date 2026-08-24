@@ -10,7 +10,7 @@ import java.util.Locale;
 
 class StudyStateButton extends Button {
     private final StudyTheBladeScreen parent;
-    private final WeaponStats.AttackType index;
+    private final WeaponStats.AttackState index;
     private final String stateKey;
     private boolean selected = false;
 
@@ -19,7 +19,7 @@ class StudyStateButton extends Button {
                             int y,
                             int width,
                             int height,
-                            WeaponStats.AttackType index,
+                            WeaponStats.AttackState index,
                             String stateKey) {
         super(x, y, width, height, Component.empty(), btn -> {
         }, DEFAULT_NARRATION);
@@ -34,7 +34,7 @@ class StudyStateButton extends Button {
         parent.updateTabContent(index);
     }
 
-    public WeaponStats.AttackType getType() {
+    public WeaponStats.AttackState getType() {
         return index;
     }
 

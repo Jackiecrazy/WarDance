@@ -431,7 +431,7 @@ public abstract class Skill extends Move {
                 CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
             //change quiver
             if (caster instanceof Player p) {
-                QuiverData.getData(p).setSelectedQuiver(this.getCategory());
+                QuiverData.getData(p).setSelectedQuiver(SkillColors.white);
                 QuiverData.getData(p).sync(p);
             }
             activate(caster, (float) sce.getEffectiveness(), sce.getDuration(), sce.isFlag(), sce.getArbitrary());

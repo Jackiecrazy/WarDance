@@ -138,8 +138,8 @@ public class Keybinds {
                     AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
                 }
             } else {
-                Vec3 destination = mc.gameRenderer.getMainCamera().getPosition().add(new Vec3(mc.gameRenderer.getMainCamera().getLookVector()));
-                //Vec3 destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32).getLocation();
+//                Vec3 destination = mc.gameRenderer.getMainCamera().getPosition().add(new Vec3(mc.gameRenderer.getMainCamera().getLookVector()));
+                Vec3 destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32).getLocation();
 //                if (ClientEvents.coyoteTimeID >= 0) {
 //                    destination = ClientEvents.coyoteVector;
 //                }

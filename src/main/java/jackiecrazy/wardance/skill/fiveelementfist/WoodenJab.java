@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.utils.EasingFunctionEnum;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.Animation;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,6 +28,11 @@ public class WoodenJab extends FiveElementFist {
     @Override
     WeaponInteractions.InteractionGroup getSweep() {
         return GROUP;
+    }
+
+    @Override
+    WeaponStats.AttackState toReplace() {
+        return WeaponStats.AttackState.STANDING;
     }
 
     @Override

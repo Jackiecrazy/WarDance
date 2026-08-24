@@ -57,7 +57,7 @@ public class QuiverMenu extends AbstractContainerMenu {
         // Overflow
         IItemHandler overflow = capability.getOverflow();
         for (int i = 0; i < QuiverData.OVERFLOW_SIZE; i++) {
-            this.addSlot(new SlotItemHandler(overflow, i, 200, 20 + i * 18));
+            this.addSlot(new SlotItemHandler(overflow, i, 200, 20+18 + i * 18));
         }
 
         // Player Inventory (positioned below)
@@ -120,7 +120,7 @@ public class QuiverMenu extends AbstractContainerMenu {
             moved = stack.copy();
 
             // Quiver slots -> player inv
-            if (index < OVERFLOW_START) {
+            if (index < PLAYER_INV_START) {
                 if (!this.moveItemStackTo(stack, PLAYER_INV_START, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }

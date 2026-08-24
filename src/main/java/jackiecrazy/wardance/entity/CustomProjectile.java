@@ -53,7 +53,7 @@ public abstract class CustomProjectile extends ThrownWeaponEntity {
     protected void autoYeet() {
 
         Vec3 dest = getOwner().getEyePosition().add(getOwner().getLookAngle().scale(32));
-        FlyingWeaponData.getCap(getOwner()).yeet(null, dest, 2);
+        FlyingWeaponData.getCap(getOwner()).yeet(null, dest, 0.5);
     }
 
     @Override

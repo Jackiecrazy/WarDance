@@ -15,9 +15,7 @@ import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
-import jackiecrazy.wardance.entity.skill.TimberfallEntity;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,7 +60,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected HitEffects terrainEffects = null;
     protected List<Skill> payload = new ArrayList<>();
     protected Skill activeSkill=null;
-    protected WeaponStats.AttackType attackType;
+    protected WeaponStats.AttackState attackState;
     protected Skill skillUsed = null;
     protected boolean fading = false;
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
@@ -74,8 +72,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         //wasIdle=false;
     }
 
-    public FlyingWeaponEntity setAttackType(WeaponStats.AttackType attackType) {
-        this.attackType = attackType;
+    public FlyingWeaponEntity setAttackType(WeaponStats.AttackState attackState) {
+        this.attackState = attackState;
         return this;
     }
 
@@ -221,7 +219,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         //boolean silent=getOwner().isSilent();
         //getOwner().setSilent(true);
         try {
-            CombatUtils.setAttackType(owner, attackType);
+            CombatUtils.setAttackType(owner, attackState);
             CombatUtils.quickSwap(owner, getHeldItem());
             WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
@@ -344,7 +342,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         payload.clear();
         setDeltaMovement(Vec3.ZERO);
         setIntangible(true);//this is needed to prevent the weapon hitting stuff when idle
-        setAttackType(WeaponStats.AttackType.UNDEFINED);
+        setAttackType(WeaponStats.AttackState.UNDEFINED);
         //unDrag();
     }
 

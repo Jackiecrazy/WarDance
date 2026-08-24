@@ -13,9 +13,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class UpdateWeaponFramePacket {
-    WeaponStats.AttackType ordinal;
+    WeaponStats.AttackState ordinal;
 
-    public UpdateWeaponFramePacket(WeaponStats.AttackType to) {
+    public UpdateWeaponFramePacket(WeaponStats.AttackState to) {
         ordinal = to;
     }
 
@@ -31,7 +31,7 @@ public class UpdateWeaponFramePacket {
 
         @Override
         public UpdateWeaponFramePacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateWeaponFramePacket(WeaponStats.AttackType.values()[packetBuffer.readInt()]);
+            return new UpdateWeaponFramePacket(WeaponStats.AttackState.values()[packetBuffer.readInt()]);
         }
     }
 

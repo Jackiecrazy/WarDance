@@ -401,7 +401,7 @@ public class CombatHandler {
                                 semeCap.tickProc(SPIRITKB, 3);
                         }
                         StylishData.getCap(seme).processAttack(true);
-                        if (CombatUtils.getAttackState(seme) != WeaponStats.AttackType.UNDEFINED)
+                        if (CombatUtils.getAttackState(seme) != WeaponStats.AttackState.UNDEFINED)
                             StylishData.getCap(seme).addCombo(0.1f, "wardance.combo.attack " + StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
                         //the attacker gets a steve time extension
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
@@ -735,7 +735,7 @@ public class CombatHandler {
                 || uke.getType().is(MobSpecs.NO_DARKTIDE)
                 || source.is(FootworkDamageTypeTags.SKILL);
         final boolean environmentalDamage = (source.getEntity() == null);
-        final boolean nonMeleeDamage = source.isIndirect() || !(source.getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;//skip the whole darktide spiel
+        final boolean nonMeleeDamage = source.isIndirect() || !(source.getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackState.UNDEFINED;//skip the whole darktide spiel
         //nonplayers cannot hold on and will vaporize if the damage is too high
         if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());

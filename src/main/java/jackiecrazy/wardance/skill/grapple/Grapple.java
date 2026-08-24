@@ -11,7 +11,6 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.MobilityUtils;
 import net.minecraft.sounds.SoundEvents;
@@ -56,7 +55,7 @@ public class Grapple extends Skill {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.HOLSTERED && isUnarmed(caster)) {
             if(procPoint instanceof PlayInteractionEvent.Pre pie)
-                pie.setInteraction(WeaponStats.getSweepInfo(ItemStack.EMPTY, caster, WeaponStats.AttackType.STANDING, true, InteractionHand.MAIN_HAND));
+                pie.setInteraction(WeaponStats.getSweepInfo(ItemStack.EMPTY, caster, WeaponStats.AttackState.STANDING, true, InteractionHand.MAIN_HAND));
             if (procPoint instanceof LivingAttackEvent la && la.getEntity() == target && DamageUtils.isMeleeAttack(la.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40) {
                     performEffect(caster, target, stats);

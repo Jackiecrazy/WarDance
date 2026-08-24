@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.fiveelementfist;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.utils.EasingFunctionEnum;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.Animation;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import net.minecraft.world.phys.Vec3;
@@ -25,6 +26,11 @@ public class FieryLunge extends FiveElementFist {
     @Override
     WeaponInteractions.InteractionGroup getSweep() {
         return FIRE_LUNGE;
+    }
+
+    @Override
+    WeaponStats.AttackState toReplace() {
+        return WeaponStats.AttackState.SPRINTING;
     }
 
 //    @Override

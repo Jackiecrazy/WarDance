@@ -121,7 +121,7 @@ public class Babylon extends Skill {
             if (procPoint instanceof LivingEntityUseItemEvent.Tick e) {
                 e.setDuration(e.getDuration() - 100);
             } else if (procPoint instanceof PlayInteractionEvent.Post e)
-                e.setCooldown(e.getOriginalState() == WeaponStats.AttackType.THROW ? 1 : 0.5);
+                e.setCooldown(e.getOriginalState() == WeaponStats.AttackState.THROW ? 1 : 0.5);
             if (procPoint instanceof GainAdrenalineEvent gme) {
                 gme.setQuantity(0);
             }

@@ -38,8 +38,8 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
             SkillColors.white, SkillColors.red, SkillColors.green, SkillColors.gray, SkillColors.azure,
             SkillColors.cyan, SkillColors.purple, SkillColors.gold
     };
-    public static final int NUM_QUIVERS = 8;
-    public static final int SLOTS_PER_QUIVER = 9;
+    public static final int NUM_QUIVERS = 1;
+    public static final int SLOTS_PER_QUIVER = 12;
     public static final int OVERFLOW_SIZE = 5;
 
     private final ItemStackHandler[] quivers = new ItemStackHandler[NUM_QUIVERS];
@@ -65,6 +65,24 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
 
     public static QuiverData getData(Player p) {
         return p.getCapability(QuiverData.QUIVER_CAP).orElseThrow(() -> new IllegalStateException("player has no quiver!"));
+    }
+
+    public static int getPreferredColor(ItemStack stack) {
+        // Return quiver index 0-7 or -1
+        if (stack.hasTag()) {
+            if (stack.getOrCreateTag().contains("quiverColorIndex"))
+                return stack.getOrCreateTag().getInt("quiverColorIndex");
+        }
+        return -1;
+    }
+
+    public static int getPreferredSlot(ItemStack stack) {
+        // Return quiver index 0-7 or -1
+        if (stack.hasTag()) {
+            if (stack.getOrCreateTag().contains("quiverSlotIndex"))
+                return stack.getOrCreateTag().getInt("quiverSlotIndex");
+        }
+        return -1;
     }
 
     /**
@@ -257,32 +275,14 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         return WeaponStats.isWeapon(null, stack);
     }
 
-    public static int getPreferredColor(ItemStack stack) {
-        // Return quiver index 0-7 or -1
-        if (stack.hasTag()) {
-            if (stack.getOrCreateTag().contains("quiverColorIndex"))
-                return stack.getOrCreateTag().getInt("quiverColorIndex");
-        }
-        return -1;
-    }
-
-    public static int getPreferredSlot(ItemStack stack) {
-        // Return quiver index 0-7 or -1
-        if (stack.hasTag()) {
-            if (stack.getOrCreateTag().contains("quiverSlotIndex"))
-                return stack.getOrCreateTag().getInt("quiverSlotIndex");
-        }
-        return -1;
-    }
-
     // On GUI open / insert: assign weapon to clicked quiver or random
     public boolean sheathe(ItemStack stack, boolean assignNew) {
         if (!isWeapon(stack)) {
             return tryInsertOverflow(stack);
         }
 
-        int quiver = getPreferredColor(stack);
-        int slot = getPreferredSlot(stack);
+        int quiver = getPreferredColor(stack) % NUM_QUIVERS;
+        int slot = getPreferredSlot(stack) % SLOTS_PER_QUIVER;
 
         // find a good quiver for it
         if (quiver == -1) {
@@ -363,6 +363,14 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         CompoundTag tag = new CompoundTag();
         ListTag quiversTag = new ListTag();
         for (ItemStackHandler handler : quivers) {
+            boolean empty = true;
+            for (int n = 0; n < handler.getSlots(); n++)
+                if (!handler.getStackInSlot(n).isEmpty()) {
+                    empty = false;
+                    break;
+                }
+            if (empty)
+                handler.setSize(SLOTS_PER_QUIVER);
             quiversTag.add(handler.serializeNBT());
         }
         tag.put("quivers", quiversTag);
@@ -379,7 +387,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        ListTag quiversTag = nbt.getList("quivers", 10); // Compound tag type
+        ListTag quiversTag = nbt.getList("quivers", 10);
         for (int i = 0; i < Math.min(quiversTag.size(), NUM_QUIVERS); i++) {
             quivers[i].deserializeNBT(quiversTag.getCompound(i));
         }

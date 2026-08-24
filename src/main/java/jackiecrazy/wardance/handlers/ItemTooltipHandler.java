@@ -49,16 +49,16 @@ public class ItemTooltipHandler {
                     else
                         e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def*100)+"%").withStyle(ChatFormatting.DARK_GREEN)));
                 }
-                if(QuiverData.getPreferredColor(stack)>=0){
-                    int color = QuiverData.getPreferredColor(stack);
-                    int ordinal = QuiverData.getPreferredSlot(stack)+1;
-                    e.getToolTip().add(Component.translatable("wardance.tooltip.quiverSlot", ordinal).withStyle(QuiverData.ORDER[color].getFormattings()));
-                }
                 if (PermissionData.getCap(entity).canSweep()) {
                     e.getToolTip().add(Component.translatable("wardance.tooltip.weaponMoves", Keybinds.SELECT.getKey().getDisplayName()).withStyle(ChatFormatting.GREEN));
                 }
             } else {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.shift").withStyle(ChatFormatting.GREEN));
+            }
+            if(QuiverData.getPreferredColor(stack)>=0){
+                int color = QuiverData.getPreferredColor(stack);
+                int ordinal = QuiverData.getPreferredSlot(stack)+1;
+                e.getToolTip().add(Component.translatable("wardance.tooltip.quiverSlot", ordinal).withStyle(QuiverData.ORDER[color].getFormattings()));
             }
 
             List<Component> tips = new ArrayList<>();

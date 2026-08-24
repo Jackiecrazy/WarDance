@@ -110,11 +110,11 @@ public class BoulderBrace extends WarCry {
                 stats.setState(STATE.ACTIVE);
             } else if (rollin > 30) {
                 //aoe hit aura
-                CombatData.getCap(caster).consumePosture(0.2f, 1);
+                CombatData.getCap(caster).consumePosture(0.3f, 1);
                 CombatData.getCap(caster).setGuardTime(6);
                 for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().expandTowards(m).inflate(1+rollin/60))) {
                     if (!TargetingUtils.isAlly(e, caster)) {
-                        e.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(rollin/30).setAttackingHand(null).setSkillUsed(this), rollin / 15);
+                        e.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(rollin/30).setAttackingHand(null).setSkillUsed(this), rollin / 30);
                     }
                 }
             }

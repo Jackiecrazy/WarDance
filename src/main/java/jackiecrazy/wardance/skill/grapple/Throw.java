@@ -28,7 +28,7 @@ public class Throw extends Skill {
 //    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
 //        if (state == STATE.HOLSTERED && ) {
 //            if(procPoint instanceof PlayInteractionEvent.Pre pie)
-//                pie.setInteraction(WeaponStats.getSweepInfo(ItemStack.EMPTY, caster, WeaponStats.AttackType.STANDING, true, InteractionHand.MAIN_HAND));
+//                pie.setInteraction(WeaponStats.getSweepInfo(ItemStack.EMPTY, caster, WeaponStats.AttackState.STANDING, true, InteractionHand.MAIN_HAND));
 //            if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() != caster && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
 //                if(CombatData.getCap(target).isStunned())
 //
@@ -45,17 +45,18 @@ public class Throw extends Skill {
                 LivingEntity target = SkillUtils.aimLiving(caster);
                 if (target != null) {
                     boolean stunned = CombatData.getCap(target).isStunned();
-                    boolean friendly = (TargetingUtils.isAlly(target, caster) && (!(target instanceof Player p) || p.isShiftKeyDown()));
+//                    boolean friendly = (TargetingUtils.isAlly(target, caster) && (!(target instanceof Player p) || p.isShiftKeyDown()));
+                    boolean friendly=true;
                     if ((stunned || friendly) && cast(caster)) {
                         CombatData.getCap(target).bindHands(40);
                         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                         //auto pickup for friendly throw
-                        ThrownWeaponEntity baseball = createAnchor(caster, friendly);
+                        ThrownWeaponEntity baseball = createAnchor(caster, false);
                         baseball.setOwner(caster);
                         baseball.moveTo(caster.getX(), caster.getY() + caster.getBbHeight() + 1, caster.getZ());
                         if (caster instanceof ServerPlayer p)
                             baseball.pickup(p);
-                        baseball.drag(target, 90, 1000);
+                        baseball.drag(target, 100, 1000);
                         baseball.setGravity(-0.08);
                         baseball.setInteractionRange(1);
                         baseball.setIntangible(true);

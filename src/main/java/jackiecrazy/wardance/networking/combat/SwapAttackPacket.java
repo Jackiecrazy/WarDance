@@ -57,14 +57,14 @@ public class SwapAttackPacket {
                     double cd=CombatUtils.getCooledAttackStrength(p, h, 1f);
                     if(QuiverData.getData(p).swapWithHand(p, h, packet.nextSlot)){
                         ItemStack nextItem = p.getItemInHand(h);
-                        WeaponStats.AttackType s = WeaponStats.AttackType.DRAW_ATTACK;
+                        WeaponStats.AttackState s = WeaponStats.AttackState.DRAW_ATTACK;
                         WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false, h);
                         if (cd >= group.getMinimumCooldown()){
                             StylishData.getCap(p).addCombo(0.1f, "wardance.combo.swap");
                             //p.setItemInHand(h, nextItem);
                             FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                            CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
-                            CombatUtils.processWeaponInteraction(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()), WeaponStats.AttackType.DRAW_ATTACK, group);
+                            CombatUtils.setAttackType(p, WeaponStats.AttackState.DRAW_ATTACK);
+                            CombatUtils.processWeaponInteraction(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()), WeaponStats.AttackState.DRAW_ATTACK, group);
                             //return;
                         }
                     }

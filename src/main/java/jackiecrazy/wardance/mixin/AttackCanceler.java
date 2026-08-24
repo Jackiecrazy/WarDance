@@ -21,13 +21,13 @@ public class AttackCanceler {
     private void combatModeOverride(Player p, Entity e, CallbackInfo ci) {
         if(StylishData.getCap(p).isCombatMode()){//schedule guard counter here
             //cancel direct attack for the guard counter
-            if(ClientEvents.heavy(WeaponStats.AttackType.GUARD_COUNTER)){
+            if(ClientEvents.heavy(WeaponStats.AttackState.GUARD_COUNTER)){
                 ci.cancel();
                 return;
             }
             //cancel direct attack for anything that is not a normal sweep
-            final WeaponStats.AttackType state = CombatUtils.getAttackState(p);
-            if(state!= WeaponStats.AttackType.UNDEFINED){
+            final WeaponStats.AttackState state = CombatUtils.getAttackState(p);
+            if(state!= WeaponStats.AttackState.UNDEFINED){
                 if(!WeaponStats.getSweepInfo(p.getMainHandItem(), p, state, false, null).hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.SWEEP)){
                     ci.cancel();
                     CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, null));

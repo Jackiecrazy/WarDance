@@ -370,6 +370,10 @@ public class CombatUtils {
     }
 
     public static void quickSwap(LivingEntity e, ItemStack stack) {
+        quickSwap(e, InteractionHand.MAIN_HAND, stack);
+    }
+
+    public static void quickSwap(LivingEntity e, InteractionHand h, ItemStack stack) {
         ItemStack main = e.getMainHandItem();
         if (swapping == null) swapping = main;
         else if (swapping == stack) swapping = null;
@@ -384,7 +388,7 @@ public class CombatUtils {
 //                }
 //            }
         }
-        quickSwap(e, stack, InteractionHand.MAIN_HAND);
+        quickSwap(e, stack, h);
     }
 
     public static void quickSwap(LivingEntity e, ItemStack stack, InteractionHand hand) {
@@ -402,7 +406,7 @@ public class CombatUtils {
 
     public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
-        WeaponStats.AttackType s = getAttackState(e);
+        WeaponStats.AttackState s = getAttackState(e);
         PlayInteractionEvent.Pre pre = new PlayInteractionEvent.Pre(e, h, stack, s);
         MinecraftForge.EVENT_BUS.post(pre);
         if (pre.isCanceled()) return false;
@@ -411,9 +415,9 @@ public class CombatUtils {
             group = WeaponStats.getSweepInfo(stack, e, pre.getMoveState(), false, h);
         PlayInteractionEvent.Interaction interaction = new PlayInteractionEvent.Interaction(e, h, stack, pre.getMoveState(), group);
         MinecraftForge.EVENT_BUS.post(interaction);
-        if (interaction.getOriginalState() == WeaponStats.AttackType.AERIAL)
+        if (interaction.getOriginalState() == WeaponStats.AttackState.AERIAL)
             AerialModeData.getCap(e).setAerialMode(true);
-        if (interaction.getOriginalState() == WeaponStats.AttackType.FALLING)
+        if (interaction.getOriginalState() == WeaponStats.AttackState.FALLING)
             AerialModeData.getCap(e).setAerialMode(false);
         //reset the attack type of the entity so it is properly passed to the flying weapon
         setAttackType(e, interaction.getOriginalState());
@@ -424,7 +428,7 @@ public class CombatUtils {
                                                    Entity ignore,
                                                    InteractionHand h,
                                                    double reach,
-                                                   WeaponStats.AttackType type, WeaponInteractions.InteractionGroup group) {
+                                                   WeaponStats.AttackState type, WeaponInteractions.InteractionGroup group) {
         //todo allow a proxy param to move the origin vec3
         ItemStack stack = e.getItemInHand(h);
         if (CombatUtils.getCooledAttackStrength(e, h, 1f) < group.getMinimumCooldown())
@@ -659,7 +663,7 @@ public class CombatUtils {
         ppe.setTrigger(pi.trigger | type.is(MobSpecs.TRIGGER_ON_PARRY));
     }
 
-    public static void setAttackType(LivingEntity entity, WeaponStats.AttackType set) {
+    public static void setAttackType(LivingEntity entity, WeaponStats.AttackState set) {
         //putting in a negative value allows the ticker to clear it on the next tick immediately
         //0 is not a problem because attack type ordinal 0 is UNDEFINED
         if (set == null) {
@@ -670,36 +674,36 @@ public class CombatUtils {
     }
 
     public static void updateNormalAttackStatus(LivingEntity entity) {
-        WeaponStats.AttackType set = WeaponStats.AttackType.STANDING;
-        //if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1) set = WeaponStats.AttackType.AERIAL;
+        WeaponStats.AttackState set = WeaponStats.AttackState.STANDING;
+        //if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1) set = WeaponStats.AttackState.AERIAL;
         if (entity.isSprinting())
-            set = WeaponStats.AttackType.SPRINTING;
+            set = WeaponStats.AttackState.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && !entity.onClimbable() && !entity.isInWater()) {
             final double epsilon = 0.02;
             Vec3 tanuki = CombatData.getCap(entity).getMotionConsistently();
             if(tanuki==null)tanuki=entity.getDeltaMovement();
             if (AerialModeData.getCap(entity).isAerialMode() || tanuki.y > epsilon)
-                set = WeaponStats.AttackType.AERIAL;
+                set = WeaponStats.AttackState.AERIAL;
             if (entity.fallDistance > 0 || tanuki.y <= epsilon)
-                set = WeaponStats.AttackType.FALLING;
+                set = WeaponStats.AttackState.FALLING;
         }
         if (entity.isSwimming() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
-            set = WeaponStats.AttackType.SPRINTING;
+            set = WeaponStats.AttackState.SPRINTING;
         //todo more ways to be in aerial mode
         switch (AerialModeData.getCap(entity).getState()) {
-            case CLING, CEILING_CLING -> set = WeaponStats.AttackType.STANDING;
-            case WALL_SLIDE -> set = WeaponStats.AttackType.SPRINTING;
-            case WALL_JUMP -> set = WeaponStats.AttackType.AERIAL;
+            case CLING, CEILING_CLING -> set = WeaponStats.AttackState.STANDING;
+            case WALL_SLIDE -> set = WeaponStats.AttackState.SPRINTING;
+            case WALL_JUMP -> set = WeaponStats.AttackState.AERIAL;
         }
         setAttackType(entity, set);
     }
 
-    public static WeaponStats.AttackType getAttackState(LivingEntity entity) {
+    public static WeaponStats.AttackState getAttackState(LivingEntity entity) {
         //outside of combat mode fallback
-//        if(!StylishData.getCap(entity).isCombatMode())return WeaponStats.AttackType.STANDING;
+//        if(!StylishData.getCap(entity).isCombatMode())return WeaponStats.AttackState.STANDING;
         if (CombatData.getCap(entity).alreadyProc("sweepState"))
-            return WeaponStats.AttackType.values()[(int) -CombatData.getCap(entity).getProc("sweepState")];
-        return WeaponStats.AttackType.UNDEFINED;
+            return WeaponStats.AttackState.values()[(int) -CombatData.getCap(entity).getProc("sweepState")];
+        return WeaponStats.AttackState.UNDEFINED;
     }
 
     public static void onSuccessfulBlock(LivingEntity defender,

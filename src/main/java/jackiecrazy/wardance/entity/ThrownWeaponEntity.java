@@ -338,11 +338,14 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         int slot = -1;
         InteractionHand h = InteractionHand.MAIN_HAND;
         boolean success = player.getAbilities().instabuild | fake;
+        final ItemStack toInsert = getPickResult();
+        final ItemStack flourishCopy = toInsert.copy();
         if (!success) {
             //fake items skip all of this inventory insertion stuff
-            final ItemStack toInsert = getPickResult();
-            if (player.getMainHandItem().isEmpty() && !CombatUtils.inDestructiveSwapSequence())
+            if (player.getMainHandItem().isEmpty() && !CombatUtils.inDestructiveSwapSequence()) {
                 slot = player.getInventory().selected;
+                //success=true;
+            }
             else if (QuiverData.getData(player).sheathe(toInsert, false)) {
                 success = true;
                 QuiverData.getData(player).sync(player);
@@ -364,31 +367,31 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         }
         if (success) {
             this.remove(RemovalReason.UNLOADED_WITH_PLAYER);
-            WeaponInteractions.InteractionGroup pickupFlourish = WeaponStats.getSweepInfo(getHeldItem(), player, WeaponStats.AttackType.PICKUP_FLOURISH, false, InteractionHand.MAIN_HAND);
+            WeaponInteractions.InteractionGroup pickupFlourish = WeaponStats.getSweepInfo(flourishCopy, player, WeaponStats.AttackState.PICKUP_FLOURISH, false, InteractionHand.MAIN_HAND);
             if (pickup_flourish) {
                 //it has to be here as it has to happen before the item is even picked up.
                 //there might be a better way....
                 if (!pickupFlourish.getInteractions().isEmpty()) {
                     //pickup flourish
-                    ItemStack held = player.getMainHandItem();
+                    ItemStack held = player.getItemInHand(h);
                     int ticks = player.attackStrengthTicker;
                     try {
-                        CombatUtils.quickSwap(player, getHeldItem());
-                        CombatUtils.setHandCooldown(player, InteractionHand.MAIN_HAND, 2, false);
-                        CombatUtils.setAttackType(player, WeaponStats.AttackType.PICKUP_FLOURISH);
-                        FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND).ifPresent(FlyingWeaponEntity::clearPath);
+                        CombatUtils.quickSwap(player, h, flourishCopy);
+                        CombatUtils.setHandCooldown(player, h, 2, false);
+                        CombatUtils.setAttackType(player, WeaponStats.AttackState.PICKUP_FLOURISH);
+                        FlyingWeaponData.getCap(player).getWeapon(h).ifPresent(FlyingWeaponEntity::clearPath);
                         FlyingWeaponData.getCap(player).forceRefreshWeapons();
-                        CombatUtils.processWeaponInteraction(player, null, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), WeaponStats.AttackType.PICKUP_FLOURISH, pickupFlourish);
+                        CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), WeaponStats.AttackState.PICKUP_FLOURISH, pickupFlourish);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     } finally {
-                        CombatUtils.quickSwap(player, held);
+                        CombatUtils.quickSwap(player, h, held);
                         player.attackStrengthTicker = ticks;
                     }
                 } else {
                     //just selectively run these
                     MovementUtils.applyVelocity(pickupFlourish.getVelocity(), player, pickupFlourish.isSetVelocity());
-                    pickupFlourish.on_swing().runEffects(player, player, InteractionHand.MAIN_HAND, getHeldItem());
+                    pickupFlourish.on_swing().runEffects(player, player, InteractionHand.MAIN_HAND, flourishCopy);
                 }
             }
             player.resetFallDistance();

@@ -34,7 +34,7 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
     private InfoPanel mainInfo; // Main description area
     private InfoPanel tips; // Small right box
     private ItemStack displayedStack = null;
-    private WeaponStats.AttackType tab = null; // null = Summary?
+    private WeaponStats.AttackState tab = null; // null = Summary?
 
     public StudyTheBladeScreen(StudyTheBlade menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -78,10 +78,10 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         tips.clearInfo();
 
         int tabX = 20;
-        int tabY = (height-(WeaponStats.AttackType.values().length*TAB_HEIGHT))/2;
+        int tabY = (height-(WeaponStats.AttackState.values().length*TAB_HEIGHT))/2;
 
 
-        for (WeaponStats.AttackType t : WeaponStats.AttackType.values()) {
+        for (WeaponStats.AttackState t : WeaponStats.AttackState.values()) {
             StudyStateButton tab = new StudyStateButton(this, tabX, tabY + t.ordinal() * TAB_HEIGHT, TAB_WIDTH, TAB_HEIGHT, t, t.name());
             tabButtons.add(tab);
             addRenderableWidget(tab);
@@ -101,10 +101,10 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
 
     public void setDisplayedItem(ItemStack stack) {
         this.displayedStack = stack;
-        updateTabContent(WeaponStats.AttackType.UNDEFINED);
+        updateTabContent(WeaponStats.AttackState.UNDEFINED);
     }
 
-    public void updateTabContent(WeaponStats.AttackType tab) {
+    public void updateTabContent(WeaponStats.AttackState tab) {
         if (displayedStack == null) {
             mainInfo.setInfo(Component.translatable("wardance.weeb.info"));
             tips.setInfo(Component.translatable("wardance.weeb.tips"));
@@ -126,7 +126,7 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         }
         String nee = "";
         String fallbackDesc = "wardance:wip.desc";
-        if (tab != null && tab != WeaponStats.AttackType.UNDEFINED) {
+        if (tab != null && tab != WeaponStats.AttackState.UNDEFINED) {
             nee = tab.name().toLowerCase(Locale.ROOT) + ".";
             final List<WeaponInteractions.WeaponInteraction> RULESOFNATURE = WeaponStats.getSweepInfo(displayedStack, player, tab, true, InteractionHand.MAIN_HAND).getInteractions();
             if (!RULESOFNATURE.isEmpty()) {
@@ -146,7 +146,7 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         final String name = orElse(base + "name", "");
         main.add("{" + name + ";GOLD}");
         String tags = "";
-        if (tab != null && tab != WeaponStats.AttackType.UNDEFINED)
+        if (tab != null && tab != WeaponStats.AttackState.UNDEFINED)
             for (String str : data.getTags(tab))
                 tags = tags.concat((tags.isEmpty() ? "" : " • ") + Component.translatable("wardance.attack.tag." + str).getString());
         main.add(tags);

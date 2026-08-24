@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.fiveelementfist;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.utils.EasingFunctionEnum;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.Animation;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import jackiecrazy.wardance.event.MeleePostureEvent;
@@ -56,5 +57,10 @@ public class IronChop extends FiveElementFist {
     @Override
     WeaponInteractions.InteractionGroup getSweep() {
         return IRON_CHOP;
+    }
+
+    @Override
+    WeaponStats.AttackState toReplace() {
+        return WeaponStats.AttackState.FALLING;
     }
 }

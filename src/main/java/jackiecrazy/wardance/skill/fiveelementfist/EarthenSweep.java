@@ -40,4 +40,9 @@ public class EarthenSweep extends FiveElementFist {
     WeaponInteractions.InteractionGroup getSweep() {
         return EARTH_SWEEP;
     }
+
+    @Override
+    WeaponStats.AttackState toReplace() {
+        return WeaponStats.AttackState.STANDING;
+    }
 }

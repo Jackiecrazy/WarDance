@@ -43,13 +43,12 @@ public class QuiverScreen extends AbstractContainerScreen<QuiverMenu> {
         int y = (this.height - this.imageHeight) / 2;
 
         //colorize and draw each row
-        final Iterator<SkillCategory> iterator = Arrays.stream(QuiverData.ORDER).iterator();
         int j=0;
         //guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, 19);
         final int barSpace = 18;
-        while (iterator.hasNext()) {
+        for (int iter=0;iter<QuiverData.NUM_QUIVERS;iter++) {
             int slots = menu.getUsableSlots(j);
-            SkillCategory sc = iterator.next();
+            SkillCategory sc = QuiverData.ORDER[iter];
             Color c = sc.getColor();
             if(CasterData.getCap(minecraft.player).getEquippedColors().contains(sc)) {
                 RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);

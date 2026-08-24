@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class HeavyPacket {
     boolean main;
-    WeaponStats.AttackType state;
+    WeaponStats.AttackState state;
     /*
     spitballin:
 
@@ -45,7 +45,7 @@ public class HeavyPacket {
         directly allow parsing a motionmanager as a swing action.
      */
 
-    public HeavyPacket(boolean isMainHand, WeaponStats.AttackType movestate) {
+    public HeavyPacket(boolean isMainHand, WeaponStats.AttackState movestate) {
         main = isMainHand;
         state=movestate;
     }
@@ -63,7 +63,7 @@ public class HeavyPacket {
 
         @Override
         public HeavyPacket apply(FriendlyByteBuf packetBuffer) {
-            return new HeavyPacket(packetBuffer.readBoolean(), WeaponStats.AttackType.values()[packetBuffer.readInt()]);
+            return new HeavyPacket(packetBuffer.readBoolean(), WeaponStats.AttackState.values()[packetBuffer.readInt()]);
         }
     }
 
@@ -77,7 +77,7 @@ public class HeavyPacket {
                 if (sender == null) return;
                 CombatUtils.setAttackType(sender, packet.state);
                 CombatUtils.processWeaponInteraction(sender, null, h, sender.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
-                //CombatUtils.scheduleFinisher(sender, h, WeaponStats.AttackType.STANDING);
+                //CombatUtils.scheduleFinisher(sender, h, WeaponStats.AttackState.STANDING);
             });
             contextSupplier.get().setPacketHandled(true);
         }

@@ -486,9 +486,10 @@ public class NewCombatCapability implements ICombatCapability {
             setSpirit(MAX_SPIRIT);
 
         //store motion for further use
-        if (player){// && (ticks > 5 || (lastUpdate + ticks) % 5 < lastUpdate % 5)) {
+        final int motionUpdateInterval = 3;
+        if (player && (ticks > motionUpdateInterval || (lastUpdate + ticks) % motionUpdateInterval < lastUpdate % motionUpdateInterval)) {
             if (lastPos == null) lastPos = elb.position();
-            motion = elb.position().subtract(lastPos).scale(20);
+            motion = elb.position().subtract(lastPos).scale(1f/ motionUpdateInterval);//.scale(20);
             lastPos = elb.position();
         }
 

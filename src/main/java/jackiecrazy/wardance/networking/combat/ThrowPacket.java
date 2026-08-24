@@ -1,29 +1,18 @@
 package jackiecrazy.wardance.networking.combat;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
-import jackiecrazy.wardance.entity.GhostBlockEntity;
-import jackiecrazy.wardance.entity.WarEntities;
-import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -73,11 +62,11 @@ public class ThrowPacket {
                 //have a weapon, yeet!
                 final ItemStack held = player.getItemInHand(h);
 //                if (!held.isEmpty()) {
-                    WeaponInteractions.InteractionGroup ig = WeaponStats.getSweepInfo(held, player, WeaponStats.AttackType.THROW, false, null);
+                    WeaponInteractions.InteractionGroup ig = WeaponStats.getSweepInfo(held, player, WeaponStats.AttackState.THROW, false, null);
 
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
                     CombatUtils.throw_vec = packet.destination.subtract(player.getEyePosition()).normalize();
-                    CombatUtils.setAttackType(player, WeaponStats.AttackType.THROW);
+                    CombatUtils.setAttackType(player, WeaponStats.AttackState.THROW);
                     if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()))) {
                         if ((player.getItemInHand(h).isEmpty()||ig.forceNextWeapon()||packet.next>=0) && swapFromEnderChest(packet.next, player, h))
                             cap.forceRefreshWeapons();

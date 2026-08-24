@@ -17,6 +17,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,12 +33,18 @@ public class BaseballEntity extends CustomProjectile {
 
     protected boolean friendly = false;
 
+    @Override
+    public boolean fuzzyTargeting() {
+        return super.fuzzyTargeting();
+    }
+
     public BaseballEntity(EntityType<? extends FlyingItemEntity> type,
                           Level level) {
         super(type, level);
         activeSkill = WarSkills.THROW.get();
         lodge_block = lodge_entity = true;
         pierce = bounce = 0;
+        setCosmeticItem(new ItemStack(Items.OAK_DOOR));
     }
 
     @Override
@@ -106,8 +114,9 @@ public class BaseballEntity extends CustomProjectile {
             discard();
             return;
         }
-        if (tickCount < 20)
-            getTetheringEntity().moveTo(position());
+        if(level().isClientSide())return;
+//        if (tickCount < 20)
+            getTetheringEntity().setPos(position())/*.moveTo(position())*/;
         if (getState() == FlyingItemEntity.STATE.FOLLOW && getMotionTarget() == getOwner() && isIdle()) {
             autoYeet();
         } else if (getTetheringEntity() instanceof LivingEntity target) {
